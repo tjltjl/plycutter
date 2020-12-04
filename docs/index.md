@@ -2,6 +2,12 @@
 
 Author: Tuomas Lukka, tuomas@hipcode.fi
 
+[Official homepage](https://tjltjl.github.io/plycutter)
+
+[Github repo](https://github.com/tjltjl/plycutter)
+
+[Introductory blog post with lots of pictures](https://hipcode.fi/?p=25324)
+
 ## Introduction
 
 <img align="right" src="biocta-1.png" alt="CAD model" width="30%"/>
@@ -70,6 +76,20 @@ large objects.
 Currently, the program generates the fingers somewhat randomly
 which makes it next to impossible to assemble the objects
 wrong and also makes them into interesting puzzles.
+
+# Installing plycutter
+
+On a recent ubuntu, you can do the following.
+
+        sudo apt-get install libgeos-c1v5 libmpc-dev libspatialindex-dev
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+This is copied from the github test action so it should work
+ok.
+
+On MacOS, the author uses conda to install the dependencies, see ``environment.yml``.
 
 ## Basic usage; Getting started
 
