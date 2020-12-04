@@ -1,0 +1,25 @@
+site_name: PlyCutter
+plugins:
+    - search
+    - mkdocstrings:
+        handlers:
+            python:
+                selection:
+                    inherited_members: no
+                rendering:
+                    show_category_heading: yes
+                    show_source: no
+
+theme:
+        name:
+                material
+nav:
+        - 'index.md'
+        - 'installation.md'
+        - 'dev.md'
+        - 'api/plycutter.md'
+        - 'api/plycutter/sheetplex.md'
+        - 'api/plycutter/sheetbuild.md'
+        - 'api/plycutter/heuristics.md'
+        - 'api/plycutter/geometry/geom1d.md'
+        - 'api/plycutter/geometry/geom2d.md'

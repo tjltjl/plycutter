@@ -1,0 +1,17 @@
+numpy
+pyrsistent
+ezdxf
+gmpy2
+trimesh
+shapely
+hypothesis
+matchpy
+pytest-benchmark
+sortedcontainers
+matplotlib
+scipy
+networkx
+rtree
+mkdocs
+mkdocs-material
+mkdocstrings

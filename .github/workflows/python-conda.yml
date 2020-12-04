@@ -1,0 +1,23 @@
+name: Python tests in conda
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        sudo $CONDA/bin/conda env update --file environment.yml --name base
+    - name: Run smoketest
+      run: |
+        $CONDA/bin/pytest -k smoke

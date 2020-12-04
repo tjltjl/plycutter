@@ -1,0 +1,39 @@
+
+name: Documentation - Generate and deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout base repo
+      uses: actions/checkout@master
+    - name: Checkout pages repo
+      uses: actions/checkout@master
+      with:
+        repository: tjltjl/plycutter-pages
+        token: ${{ secrets.PERSONAL_TOKEN }}
+        path: ./pages
+
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
+
+    - name: Install dependencies
+      run: |
+        # Install Shapely and gmpy2 deps
+        sudo apt-get install libgeos-c1v5 libmpc-dev libspatialindex-dev
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Deploy MkDocs
+      run: |
+        # Deploy
+        cd pages
+        PYTHONPATH=$PYTHONPATH:.. mkdocs gh-deploy --config-file ../mkdocs.yml -b main --force
+        # https://${GITHUB_ACTOR}:${PERSONAL_TOKEN}@github.com/tjltjl/plycutter-pages.git -b main --force
