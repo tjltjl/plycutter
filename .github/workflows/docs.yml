@@ -11,12 +11,6 @@ jobs:
     steps:
     - name: Checkout base repo
       uses: actions/checkout@master
-    - name: Checkout pages repo
-      uses: actions/checkout@master
-      with:
-        repository: tjltjl/plycutter-pages
-        token: ${{ secrets.PERSONAL_TOKEN }}
-        path: ./pages
 
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
@@ -35,5 +29,4 @@ jobs:
       run: |
         # Deploy
         cd pages
-        PYTHONPATH=$PYTHONPATH:.. mkdocs gh-deploy --config-file ../mkdocs.yml -b main --force
-        # https://${GITHUB_ACTOR}:${PERSONAL_TOKEN}@github.com/tjltjl/plycutter-pages.git -b main --force
+        PYTHONPATH=$PYTHONPATH:.. mkdocs gh-deploy --config-file mkdocs.yml -b ghpages --force
