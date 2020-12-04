@@ -28,4 +28,4 @@ jobs:
     - name: Deploy MkDocs
       run: |
         # Deploy
-        PYTHONPATH=$PYTHONPATH:.. mkdocs gh-deploy --config-file mkdocs.yml -b ghpages --force
+        PYTHONPATH=$PYTHONPATH:.. mkdocs gh-deploy --config-file ./mkdocs.yml -b ghpages --force
