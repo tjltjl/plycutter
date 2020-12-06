@@ -77,7 +77,7 @@ Currently, the program generates the fingers somewhat randomly
 which makes it next to impossible to assemble the objects
 wrong and also makes them into interesting puzzles.
 
-# Installing plycutter
+## Installing plycutter
 
 On a recent ubuntu, you can do the following.
 
