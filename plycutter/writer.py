@@ -48,6 +48,8 @@ def write_dxf(filename, geom2ds):
             coords = list(coords)
             coords = np.array(coords + coords[0:1])  # Loop
             coords = coords + [x_offset, y_offset]
+            coords = coords.astype(np.float64)
+            assert np.all(np.isfinite(coords))
             modelspace.add_lwpolyline(coords.tolist())
 
         for polygon in geom.polygons():
