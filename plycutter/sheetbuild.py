@@ -282,6 +282,8 @@ def create_sheetbuild(sp, params):
 def show_sheet(ax, sheetplex, sheetbuild, sheet_id):
     """Show a sheet build progress in a matplotlib axes object.
     """
+    sheetplex.sheets[sheet_id].slices_max.show2d(
+        ax, 'white', alpha=1.0, linewidth=1)
     sheetbuild.sheet_ok[sheet_id].show2d(ax, 'green', alpha=1.0)
     sheetbuild.sheet_chosen[sheet_id].show2d(ax, 'cyan', linewidth=1)
 

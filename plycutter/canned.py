@@ -29,6 +29,10 @@ from . import heuristics as heu
 logger = logging.getLogger(__name__)
 
 sb_log = None
+"""A global variable where the log from canned_1 is stored for debugging.
+
+Use this variable in jupyterlab to poke around.
+"""
 
 
 def canned_1(sheetplex, params, show=False):
@@ -70,7 +74,7 @@ def canned_1(sheetplex, params, show=False):
             sb_log.append(sb.set('dbg', op))
             sb = op(sb, params)
             if show:
-                do_show(op)
+                do_show(op, sb)
 
         sb_log.append(sb)
         sb.check(force=True)

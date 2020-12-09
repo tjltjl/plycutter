@@ -18,9 +18,12 @@
 
 import ezdxf
 import numpy as np
+import logging
 
 # XXX
 from .geometry.aabb import AABB
+
+logger = logging.getLogger(__name__)
 
 
 def write_dxf(filename, geom2ds):
@@ -31,6 +34,9 @@ def write_dxf(filename, geom2ds):
     x = 0
     for name, geom in geom2ds.items():
         print(name)
+        if geom.is_empty():
+            logger.warn(f'Empty sheet {name}')
+            continue
 
         aabb = AABB()
 

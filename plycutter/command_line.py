@@ -53,6 +53,9 @@ def main(arguments=sys.argv[1:]):
     parser.add_argument('--debug', action="store_true",
                         help='Turn on debugging.')
 
+    parser.add_argument('--vdebug', action="store_true",
+                        help='Turn on visual debugging (try in jupyterlab).')
+
     parser.add_argument('--final_dilation', type=F, default=F(5, 100),
                         help='Final dilation (laser cutter kerf compensation)')
 
@@ -89,7 +92,7 @@ def main(arguments=sys.argv[1:]):
 
     logger.info('Running canned heuristic steps')
 
-    result = canned.canned_1(sp, vars(args))
+    result = canned.canned_1(sp, vars(args), args.vdebug)
 
     logger.info(f'Writing "{outfile}"')
     to_write = result.sheet_cuts
