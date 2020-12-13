@@ -18,12 +18,12 @@ Blender is a model editor that relies on keyboard shortcuts a lot. You can press
 "Z" to change your view mode to wireframe, and do make sure the editor is in
 object mode.
 
-![](solid_to_hollow/2020-12-13-144151_960x531_scrot.png)
+![](solid_to_hollow/2020-12-13-145459_960x531_scrot.png)
 
 From the side menu select the wrench option, we're going to add the "solidify"
 modifier to our bunny
 
-![](solid_to_hollow/2020-12-13-144640_960x531_scrot.png)
+![](solid_to_hollow/2020-12-13-144712_960x531_scrot.png)
 
 Finally, we want to set the thickness to "3 m" (for a 3mm offset) check the
 "even thickness" box, and unset the fill option.
