@@ -32,3 +32,5 @@ You can see at this point we have a distinct inside and outside, in the style
 required by plycutter.
 
 ![](solid_to_hollow/2020-12-13-144924_960x531_scrot.png)
+
+At this point you can furthur tweak the geometry of your model in edit mode (the offset will automatically match the new geometry) or you can export your model as an STL again.
