@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='plycutter',
       version='0.0',
@@ -8,7 +8,7 @@ setup(name='plycutter',
       author_email='tuomas@hipcode.fi',
       license='AGPL-3.0 or later',
       python_requires='>=3.7.0',
-      packages=['plycutter'],
+      packages=find_packages(),
       zip_safe=True,
       install_requires=[
           'numpy',
