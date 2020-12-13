@@ -15,6 +15,7 @@ theme:
                 material
 nav:
         - 'index.md'
+        - 'acknowledgments.md'
         - 'dev.md'
         - 'api/plycutter.md'
         - 'api/plycutter/sheetplex.md'

@@ -18,4 +18,5 @@ dependencies:
   - rtree
   - mkdocs
   - mkdocs-material
+  - mkdocs-material-extensions
   - mkdocstrings
