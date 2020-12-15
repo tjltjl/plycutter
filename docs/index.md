@@ -79,6 +79,8 @@ wrong and also makes them into interesting puzzles.
 
 ## Installing plycutter
 
+### Installing dependencies
+
 On a recent ubuntu, you can do the following.
 
         sudo apt-get install libgeos-c1v5 libmpc-dev libspatialindex-dev
@@ -90,6 +92,24 @@ This is copied from the github test action so it should work
 ok.
 
 On MacOS, the author uses conda to install the dependencies, see ``environment.yml``.
+
+### Installing plycutter itself
+
+#### Conventional method using ``setup.py``
+
+To install plycutter into your current python environment, run the command
+
+        python setup.py install
+
+After this, running ``plycutter`` as a shell command should work
+
+#### Using ``pipx``
+
+It is also possible to install plycutter and its dependencies via [pipx](https://github.com/pipxproject/pipx).
+
+        pipx install git+https://github.com/tjltjl/plycutter.git
+
+See the ``pipx`` dodumentation for details
 
 ## Basic usage; Getting started
 
