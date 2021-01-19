@@ -10,5 +10,9 @@ On a recent ubuntu, you can do the following.
 This is copied from the github test action so it should work
 ok.
 
-On MacOS, the author uses conda to install the dependencies
-but there is no explicit list at the moment.
+On MacOS (and probably other OSes), you can use conda to install the dependencies using
+
+        conda env update --file environment.yml
+        
+in the main plycutter directory. If you like, you can create a new conda environment
+for plycutter before doing this.
