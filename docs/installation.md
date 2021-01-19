@@ -1,5 +1,9 @@
 # Installing plycutter
 
+## Basic installation
+
+### Linux
+
 On a recent ubuntu, you can do the following.
 
         sudo apt-get install libgeos-c1v5 libmpc-dev libspatialindex-dev
@@ -10,9 +14,15 @@ On a recent ubuntu, you can do the following.
 This is copied from the github test action so it should work
 ok.
 
+### Conda
+
 On MacOS (and probably other OSes), you can use conda to install the dependencies using
 
         conda env update --file environment.yml
         
 in the main plycutter directory. If you like, you can create a new conda environment
 for plycutter before doing this.
+
+## After installation
+
+You can run the tests using ``pytest``.
