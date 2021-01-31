@@ -24,40 +24,11 @@ from ....plytypes import F
 
 from ..primitive2d import segment_segment_general_intersection
 
+from .util import tr, ply_fractions, det22, random_transform_matrices
+
 
 def P(a, b):
     return (F(a), F(b))
-
-
-@hys.composite
-def ply_fractions(draw):
-    return F(draw(hys.fractions(max_denominator=101)))
-
-
-def tr(transform, points):
-    if transform is None:
-        return points
-    # return transform[:, 0:2] @ points + transform[:, 2]
-    return points @ transform[:, 0:2].T + transform[:, 2]
-
-
-def det22(m):
-    return m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0]
-
-
-@hys.composite
-def random_transform_matrices(draw):
-    c = [draw(ply_fractions()) for _ in range(6)]
-
-    m = np.reshape(np.array(c, dtype=object), (2, 3))
-    det = det22(m)
-    if det == 0:
-        m[0, 0] += 1
-        m[1, 1] += 1
-    det = det22(m)
-    hyp.assume(det != 0)
-
-    return m
 
 
 ###########
