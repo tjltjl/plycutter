@@ -30,6 +30,16 @@ from .util import tr, random_transform_matrices
 #########
 #
 # Merge squares
+#
+# Uses squares on a square grid to run a set of operations sequentially
+# to an accumulator that starts empty.
+#
+# An operation looks like
+#
+#   ('and', [(1, 2), (3, 4)])
+#
+# which means that the squares at (1, 2) and (3, 4) should be 'or'ed
+# together and then the accumulator should be 'and'ed with the result.
 
 N = 8
 
@@ -45,15 +55,21 @@ square_idxs = [(x, y) for x in range(N) for y in range(N)]
         hys.lists(elements=hys.sampled_from(square_idxs)))),
     random_transform_matrices()
 )
-def test_merge_squares(ops, transform):
-    cur = Geom2D.empty()
-    coords = {k: 0 for k in square_idxs}
+def test_merge_squares(ops, transform): # noqa: C901
+    # The following two are two different ways of representing
+    # the same thing: accumulator as Geom2D and manual as
+    # a dict of square coordinate positions.
+    #
+    # Later we assert that they stay the same.
+    accumulator = Geom2D.empty()
+    manual = {k: 0 for k in square_idxs}
+
     for op, args in ops:
         if op == 'and':
-            new_coords = {k: 0 for k in coords.keys()}
+            new_manual = {k: 0 for k in manual.keys()}
             for x, y in args:
-                new_coords[x, y] = coords[x, y]
-            coords = new_coords
+                new_manual[x, y] = manual[x, y]
+            manual = new_manual
 
         operand = Geom2D.empty()
 
@@ -65,21 +81,21 @@ def test_merge_squares(ops, transform):
                 lambda coords: tr(transform, coords))
             operand = operand | square
             if op == 'or':
-                coords[x, y] = 1
+                manual[x, y] = 1
             elif op == 'sub':
-                coords[x, y] = 0
+                manual[x, y] = 0
 
         hyp.note('go')
         if op == 'and':
-            cur = cur & operand
+            accumulator = accumulator & operand
         elif op == 'or':
-            cur = cur | operand
+            accumulator = accumulator | operand
         elif op == 'sub':
-            cur = cur - operand
+            accumulator = accumulator - operand
 
         half = F(1, 2)
         for x, y in square_idxs:
             pt = tr(transform, (x + half, y + half))
-            loc = cur.locate(pt)
+            loc = accumulator.locate(pt)
             assert loc != 0
-            assert (loc == 1) == (coords[x, y] == 1), coords
+            assert (loc == 1) == (manual[x, y] == 1), manual
