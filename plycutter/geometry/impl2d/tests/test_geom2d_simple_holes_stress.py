@@ -48,14 +48,14 @@ squares = [[Geom2D.rectangle(x, y, x + 1, y + 1)
 square_idxs = [(x, y) for x in range(N) for y in range(N)]
 
 
-@hyp.settings(deadline=30000)
+@hyp.settings(deadline=30000)  # noqa: C901
 @hyp.given(
     hys.lists(elements=hys.tuples(
         hys.sampled_from(["and", "or", "sub"]),
         hys.lists(elements=hys.sampled_from(square_idxs)))),
     random_transform_matrices()
 )
-def test_merge_squares(ops, transform): # noqa: C901
+def test_merge_squares(ops, transform):  # noqa: C901
     # The following two are two different ways of representing
     # the same thing: accumulator as Geom2D and manual as
     # a dict of square coordinate positions.
