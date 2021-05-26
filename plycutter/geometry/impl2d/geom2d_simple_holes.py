@@ -304,7 +304,7 @@ class Geom2D_Py_Simple_Holes(geom2dbase.Geom2DBase):
 
         return self._arrangement_op([self, other], oper)
 
-    def buffer(self, amount):
+    def buffer(self, amount, resolution=8):
         global locs
         locs = locals()  # DBG
         if oplogger.isEnabledFor(logging.DEBUG):
@@ -313,7 +313,7 @@ class Geom2D_Py_Simple_Holes(geom2dbase.Geom2DBase):
         if amount == 0:
             return self
         amount = FractionFromExact(amount)
-        buf = buffer_of_size(abs(amount))
+        buf = buffer_of_size(abs(amount), n=resolution)
         res = self._minkowski_convex_op(
             buf, 1 if amount > 0 else -1)
         oplogger.debug('done')
