@@ -16,11 +16,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import hypothesis as hyp
-import hypothesis.stateful
-import hypothesis.strategies as hys
-
 from ..geom2d import Geom2D
+
 
 def test_buffer():
     square = Geom2D.rectangle(0, 0, 1, 1)
