@@ -66,6 +66,7 @@ class SheetBuild(pyr.PRecord, Autocompletable):
 
     Call sb.check(force=True) to force a check to happen.
     """
+
     sheetplex = pyr.field()
 
     sheet_chosen = pyr.field()
@@ -88,14 +89,16 @@ class SheetBuild(pyr.PRecord, Autocompletable):
             sheet_chosen=self.sheet_chosen,
             sheet_ok=self.sheet_ok,
             interside_chosen=self.interside_chosen,
-            interside_ok=map_sub_geom(self.interside_ok,
-                                      interside.id, v),
+            interside_ok=map_sub_geom(self.interside_ok, interside.id, v),
         )
 
     def unchoose_sheet_area(self, sheet_id, area):
         assert (self.sheet_chosen[sheet_id] & area).area() < 1e-5
-        return self.transform(['sheet_ok', sheet_id],
-                              lambda orig: orig - area)
+        return self.transform(["sheet_ok", sheet_id], lambda orig: orig - area)
+
+    def choose_sheet_area(self, sheet_id, area):
+        assert area.area() - (self.sheet_ok[sheet_id] & area).area() < 1e-5
+        return self.transform(["sheet_chosen", sheet_id], lambda orig: orig | area)
 
     def unchoose_intersides(self, unchoices):
         for interside_id, v in unchoices.items():
@@ -103,20 +106,22 @@ class SheetBuild(pyr.PRecord, Autocompletable):
         return self
 
     def choose_interside(self, interside_id, v, tentative=False):
-        assert (~self.interside_ok[interside_id] & v).measure1d() < 1e-6, \
-            (interside_id, self.interside_ok[interside_id], v,
-             'INTER',
-             (~self.interside_ok[interside_id] & v)
-             )
+        assert (~self.interside_ok[interside_id] & v).measure1d() < 1e-6, (
+            interside_id,
+            self.interside_ok[interside_id],
+            v,
+            "INTER",
+            (~self.interside_ok[interside_id] & v),
+        )
         interside = self.sheetplex.interside(interside_id)
         opposite = interside.opposite(self.sheetplex)
 
         opposite_2d = opposite.make_fingers(v)
-        assert ((opposite_2d &
-                 self.sheet_chosen[opposite.sheet]).area() < 1e-6),\
-            ((opposite_2d & self.sheet_chosen[opposite.sheet]).area(),
-             interside.sheet, opposite.sheet,
-             )
+        assert (opposite_2d & self.sheet_chosen[opposite.sheet]).area() < 1e-6, (
+            (opposite_2d & self.sheet_chosen[opposite.sheet]).area(),
+            interside.sheet,
+            opposite.sheet,
+        )
 
         return SheetBuild(
             sheetplex=self.sheetplex,
@@ -126,13 +131,12 @@ class SheetBuild(pyr.PRecord, Autocompletable):
             map_or_geom(
                 self.sheet_chosen,
                 interside.sheet,
-                interside.make_fingers(v) & self.sheet_ok[interside.sheet]),
+                interside.make_fingers(v) & self.sheet_ok[interside.sheet],
+            ),
             sheet_ok=map_sub_geom(
-                self.sheet_ok,
-                opposite.sheet,
-                opposite.make_fingers(v)),
-            interside_chosen=map_or_geom(
-                self.interside_chosen, interside_id, v),
+                self.sheet_ok, opposite.sheet, opposite.make_fingers(v)
+            ),
+            interside_chosen=map_or_geom(self.interside_chosen, interside_id, v),
             interside_ok=map_sub_geom(self.interside_ok, opposite.id, v),
         )
 
@@ -142,66 +146,70 @@ class SheetBuild(pyr.PRecord, Autocompletable):
         return self
 
     def check(self, force=False):
-        """Assert that various invariants are true.
-        """
+        """Assert that various invariants are true."""
         global check_index
         check_index += 1
         if force or check_index > check_interval:
             check_index = 0
             self._check()
         else:
-            logger.info('check elided')
+            logger.info("check elided")
 
     def _check(self):
-        logger.info('check really')
+        logger.info("check really")
         sp = self.sheetplex
 
         # Check that sheet_chosen <= sheet_ok
         for sheet in sp.sheets.values():
             # The slack is allowed but should be removed now that we have
             # exact geometery
-            assert (self.sheet_chosen[sheet.id]
-                    - self.sheet_ok[sheet.id]).area() < 1e-7, \
-                (self.sheet_chosen[sheet.id]
-                 - self.sheet_ok[sheet.id]).area()
+            assert (
+                self.sheet_chosen[sheet.id] - self.sheet_ok[sheet.id]
+            ).area() < 1e-7, (
+                self.sheet_chosen[sheet.id] - self.sheet_ok[sheet.id]
+            ).area()
 
         for interside in sp.intersides():
             opposite = interside.opposite(sp)
             # Check that interside_chosen <= interside_ok
-            assert (self.interside_chosen[interside.id]
-                    - self.interside_ok[interside.id]).measure1d() < 1e-7, \
-                (interside.id,
-                 (self.interside_chosen[interside.id]
-                  - self.interside_ok[interside.id]).measure1d(),
-                 self.interside_chosen[interside.id],
-                 self.interside_ok[interside.id],
-                 )
+            assert (
+                self.interside_chosen[interside.id] - self.interside_ok[interside.id]
+            ).measure1d() < 1e-7, (
+                interside.id,
+                (
+                    self.interside_chosen[interside.id]
+                    - self.interside_ok[interside.id]
+                ).measure1d(),
+                self.interside_chosen[interside.id],
+                self.interside_ok[interside.id],
+            )
 
             # Check that intersection can be chosen only by one side
-            assert (self.interside_chosen[interside.id] &
-                    self.interside_ok[opposite.id]).is_empty()
+            assert (
+                self.interside_chosen[interside.id] & self.interside_ok[opposite.id]
+            ).is_empty()
 
             # Check that interside_ok for an opposing side is unable
             # to choose parts that have been chosen in the sheet.
-            chosen_but_other_ok = (self.sheet_chosen[interside.sheet] &
-                                   interside.make_fingers(
-                self.interside_ok[opposite.id]))
-            assert chosen_but_other_ok.area() < 0.001, \
-                fastr(interside.id,
-                      self.interside_ok[interside.id],
-                      self.interside_ok[opposite.id],
-                      self.interside_chosen[interside.id],
-                      self.interside_chosen[opposite.id],
-                      chosen_but_other_ok.area())
+            chosen_but_other_ok = self.sheet_chosen[
+                interside.sheet
+            ] & interside.make_fingers(self.interside_ok[opposite.id])
+            assert chosen_but_other_ok.area() < 0.001, fastr(
+                interside.id,
+                self.interside_ok[interside.id],
+                self.interside_ok[opposite.id],
+                self.interside_chosen[interside.id],
+                self.interside_chosen[opposite.id],
+                chosen_but_other_ok.area(),
+            )
 
-        logger.info('check done')
+        logger.info("check done")
         return self
 
 
 def map_or_geom(mapping, key, geom):
     """For a pyrsistent map, result of map[key] |= geom"""
-    return mapping.set(key,
-                       (mapping.get(key) or geom.__class__.empty()) | geom)
+    return mapping.set(key, (mapping.get(key) or geom.__class__.empty()) | geom)
 
 
 def map_and_geom(mapping, key, geom):
@@ -215,50 +223,52 @@ def map_sub_geom(mapping, key, geom):
 
 
 def map_and(mapping1, mapping2):
-    """Return the intersection of two arbitrary maps whose values are geoms.
-    """
-    return pyr.pmap({
-        k: v1 & mapping2[k]
-        for k, v1 in mapping1.items()
-        if k in mapping2 and not (v1 & mapping2[k]).is_empty()
-    })
+    """Return the intersection of two arbitrary maps whose values are geoms."""
+    return pyr.pmap(
+        {
+            k: v1 & mapping2[k]
+            for k, v1 in mapping1.items()
+            if k in mapping2 and not (v1 & mapping2[k]).is_empty()
+        }
+    )
 
 
 def map_or(mapping1, mapping2):
-    """Return the union of two arbitrary maps whose values are geoms.
-    """
+    """Return the union of two arbitrary maps whose values are geoms."""
     for k, v in mapping2.items():
         mapping1 = map_or_geom(mapping1, k, v)
     return mapping1
 
 
 def create_sheetbuild(sp, params):
-    """Create an as-free-as-possible SheetBuild for the given SheetPlex.
-    """
+    """Create an as-free-as-possible SheetBuild for the given SheetPlex."""
     max_buffer = 0  # F(1, 1000)
     both_faces_buffer = 1
-    sheet_chosen = {sheet.id: (sheet.faces[0] & sheet.faces[1]).buffer(
-        both_faces_buffer) & sheet.slices_max.buffer(max_buffer)
-        for sheet in sp.sheets.values()}
+    sheet_chosen = {
+        sheet.id: (sheet.faces[0] & sheet.faces[1]).buffer(both_faces_buffer)
+        & sheet.slices_max.buffer(max_buffer)
+        for sheet in sp.sheets.values()
+    }
     sheet_chosen_orig = {**sheet_chosen}
 
-    ok_rad = params['support_radius']
-    sheet_ok = {sheet.id:
-                sheet.faces[0].buffer(ok_rad)
-                & sheet.faces[1].buffer(ok_rad)
-                & sheet.slices_max.buffer(max_buffer)
-                for sheet in sp.sheets.values()}
+    ok_rad = params["support_radius"]
+    sheet_ok = {
+        sheet.id: sheet.faces[0].buffer(ok_rad)
+        & sheet.faces[1].buffer(ok_rad)
+        & sheet.slices_max.buffer(max_buffer)
+        for sheet in sp.sheets.values()
+    }
 
-    interside_chosen = {interside.id: Geom1D.empty()
-                        for interside in sp.intersides()}
+    interside_chosen = {interside.id: Geom1D.empty() for interside in sp.intersides()}
 
-    interside_ok = {interside.id:
-                    interside.project_to_1d(
-                        sheet_ok[interside.sheet] &
-                        sp.sheets[interside.sheet].slices_max &
-                        interside.make_fingers(
-                            Geom1D([[Fraction(-1000), Fraction(1000)]])))
-                    for interside in sp.intersides()}
+    interside_ok = {
+        interside.id: interside.project_to_1d(
+            sheet_ok[interside.sheet]
+            & sp.sheets[interside.sheet].slices_max
+            & interside.make_fingers(Geom1D([[Fraction(-1000), Fraction(1000)]]))
+        )
+        for interside in sp.intersides()
+    }
 
     for interside in sp.intersides():
         interside_ok[interside.id] &= interside_ok[interside.opposite(sp).id]
@@ -280,17 +290,15 @@ def create_sheetbuild(sp, params):
 
 
 def show_sheet(ax, sheetplex, sheetbuild, sheet_id):
-    """Show a sheet build progress in a matplotlib axes object.
-    """
-    sheetplex.sheets[sheet_id].slices_max.show2d(
-        ax, 'white', alpha=1.0, linewidth=1)
-    sheetbuild.sheet_ok[sheet_id].show2d(ax, 'green', alpha=1.0)
-    sheetbuild.sheet_chosen[sheet_id].show2d(ax, 'cyan', linewidth=1)
+    """Show a sheet build progress in a matplotlib axes object."""
+    sheetplex.sheets[sheet_id].slices_max.show2d(ax, "white", alpha=1.0, linewidth=1)
+    sheetbuild.sheet_ok[sheet_id].show2d(ax, "green", alpha=1.0)
+    sheetbuild.sheet_chosen[sheet_id].show2d(ax, "cyan", linewidth=1)
 
     for interside in sheetplex.intersides(sheet_id):
-        interside.make_fingers(sheetbuild.interside_chosen[interside.id],
-                               F(4, 10), F(6, 10)).\
-            show2d(ax, 'red', alpha=0.3)
-        interside.make_fingers(sheetbuild.interside_ok[interside.id],
-                               F(3, 10), F(7, 10)).\
-            show2d(ax, 'blue', alpha=0.3)
+        interside.make_fingers(
+            sheetbuild.interside_chosen[interside.id], F(4, 10), F(6, 10)
+        ).show2d(ax, "red", alpha=0.3)
+        interside.make_fingers(
+            sheetbuild.interside_ok[interside.id], F(3, 10), F(7, 10)
+        ).show2d(ax, "blue", alpha=0.3)

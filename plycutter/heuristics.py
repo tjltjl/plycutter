@@ -47,16 +47,12 @@ def choose_obviously_irrelevant(sb, params=None):
     unchoices = {}
     for interside in sp.intersides():
         ok = sb.interside_ok[interside.id]
-        fing = interside.make_fingers(
-            ok.buffer(F(1, 100)))
-        outside = sp.sheets[interside.sheet].slices_max & fing.buffer(
-            F(1, 100))
+        fing = interside.make_fingers(ok.buffer(F(1, 100)))
+        outside = sp.sheets[interside.sheet].slices_max & fing.buffer(F(1, 100))
         outside -= fing.buffer(F(1, 1000))
         outsideless = ~interside.project_to_1d(outside)
         opposite = interside.opposite(sp)
-        unchoices[interside.id] = (outsideless &
-                                   ok &
-                                   sb.interside_ok[opposite.id])
+        unchoices[interside.id] = outsideless & ok & sb.interside_ok[opposite.id]
         # logger.debug(interside.id, outsideless, ok, outsideless & ok)
 
     # logger.debug(choices)
@@ -75,12 +71,12 @@ def remove_loose(sb, params=None):
         for polygon in possible.polygons():
             if (polygon & full_support).is_empty():
                 # assert (sb.sheet_chosen[sheet.id] & polygon).is_empty()
-                assert (sb.sheet_chosen[sheet.id] & polygon).area() < 0.01, \
-                    (sheet.id,
-                     (sb.sheet_chosen[sheet.id] & polygon).area())
+                assert (sb.sheet_chosen[sheet.id] & polygon).area() < 0.01, (
+                    sheet.id,
+                    (sb.sheet_chosen[sheet.id] & polygon).area(),
+                )
                 impossible |= polygon
-        sb = sb.transform(['sheet_ok', sheet.id],
-                          lambda old: old - impossible)
+        sb = sb.transform(["sheet_ok", sheet.id], lambda old: old - impossible)
     return sb
 
 
@@ -90,13 +86,13 @@ def update_intersection_ok(sb, params=None):
     sb.check()
     for interside in sb.sheetplex.intersides():
         ok = sb.interside_ok[interside.id]
-        fing = interside.make_fingers(
-            ok.buffer(F(1, 10)))
+        fing = interside.make_fingers(ok.buffer(F(1, 10)))
         max_fing = fing & sb.sheet_ok[interside.sheet]  # .buffer(-.001)
-        unsupported = interside.project_to_1d(
-            fing) - interside.project_to_1d(max_fing)
-        sb = sb.transform(['interside_ok', interside.id],
-                          lambda old: old - unsupported.buffer(F(1, 1000)))
+        unsupported = interside.project_to_1d(fing) - interside.project_to_1d(max_fing)
+        sb = sb.transform(
+            ["interside_ok", interside.id],
+            lambda old: old - unsupported.buffer(F(1, 1000)),
+        )
     return sb
 
 
@@ -111,17 +107,16 @@ def update_sheet_ok(sb, params=None):
         ok_on_interside = Geom2D.empty()
         for interside in sp.intersides(sheet.id):
             opposite = interside.opposite(sp)
-            ok_on_interside |= interside.make_fingers(
-                sb.interside_ok[interside.id])
+            ok_on_interside |= interside.make_fingers(sb.interside_ok[interside.id])
             on_interside |= interside.make_fingers(
-                sb.interside_ok[interside.id] |
-                sb.interside_ok[opposite.id]
+                sb.interside_ok[interside.id] | sb.interside_ok[opposite.id]
             )
 
         sb = sb.unchoose_sheet_area(
-                sheet.id,
-                ((on_interside - ok_on_interside).buffer(F(2, 1000))) -
-                sb.sheet_chosen[sheet.id])
+            sheet.id,
+            ((on_interside - ok_on_interside).buffer(F(2, 1000)))
+            - sb.sheet_chosen[sheet.id],
+        )
     return sb
 
 
@@ -155,12 +150,10 @@ def _find_interactions(sb):
     for sheet in sp.sheets.values():
         intersides = list(sp.intersides(sheet.id))
         for i, i_interside in enumerate(intersides):
-            i_fingers = i_interside.make_fingers(
-                sb.interside_ok[i_interside.id])
+            i_fingers = i_interside.make_fingers(sb.interside_ok[i_interside.id])
 
-            for j_interside in intersides[i + 1:]:
-                j_fingers = j_interside.make_fingers(
-                    sb.interside_ok[j_interside.id])
+            for j_interside in intersides[i + 1 :]:
+                j_fingers = j_interside.make_fingers(sb.interside_ok[j_interside.id])
                 double = i_fingers & j_fingers
                 if not double.is_empty():
                     i_double = i_interside.project_to_1d(double)
@@ -172,7 +165,8 @@ def _find_interactions(sb):
                             range=i_double,
                             other_interside=j_interside.id,
                             other_range=j_double,
-                        ))
+                        )
+                    )
 
                     interactions[j_interside.intersection].append(
                         _Interaction(
@@ -180,7 +174,8 @@ def _find_interactions(sb):
                             range=j_double,
                             other_interside=i_interside.id,
                             other_range=i_double,
-                        ))
+                        )
+                    )
 
     return _Interactions(
         sheetplex=sb.sheetplex,
@@ -195,16 +190,17 @@ def _find_interaction_clusters(sb, interactions):
 
     n = 0
 
-    for intersection_id, interaction_list in \
-            interactions.by_intersection.items():
+    for intersection_id, interaction_list in interactions.by_intersection.items():
         # logger.debug("\n", intersection_id)
         for interaction in interaction_list:
-            cmap = pyr.pmap({
-                sp.interside(interaction.interside).intersection:
-                    interaction.range,
-                sp.interside(interaction.other_interside).intersection:
-                    interaction.other_range,
-            })
+            cmap = pyr.pmap(
+                {
+                    sp.interside(interaction.interside).intersection: interaction.range,
+                    sp.interside(
+                        interaction.other_interside
+                    ).intersection: interaction.other_range,
+                }
+            )
 
             # Check which clusters it belongs to
             belongs_to = []
@@ -216,18 +212,18 @@ def _find_interaction_clusters(sb, interactions):
             if len(belongs_to) > 0:
                 # logger.debug('add_to', belongs_to[0])
                 cluster_members[belongs_to[0]] = map_or(
-                    cluster_members[belongs_to[0]],
-                    cmap)
+                    cluster_members[belongs_to[0]], cmap
+                )
 
                 for k in belongs_to[1:]:
                     cluster_members[belongs_to[0]] = map_or(
-                        cluster_members[belongs_to[0]],
-                        cluster_members[k])
+                        cluster_members[belongs_to[0]], cluster_members[k]
+                    )
                     del cluster_members[k]
                 # logger.debug('-->', cluster_members[belongs_to[0]])
             else:
                 # If none, start a new cluster
-                cid = 'c%d' % n
+                cid = "c%d" % n
                 n += 1
                 cluster_members[cid] = cmap
                 # logger.debug('New', cid, cluster_members[cid])
@@ -243,9 +239,9 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
     for all intersections, plus
     add enough extra to make it fit.
     """
-    logger.debug('Find interactions')
+    logger.debug("Find interactions")
     interactions = _find_interactions(sb)
-    logger.debug('Find clusters')
+    logger.debug("Find clusters")
     clusters = _find_interaction_clusters(sb, interactions)
 
     # Reserve all multi-intersections from
@@ -256,9 +252,10 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
 
     sp = sb.sheetplex
     for cluster in clusters.values():
-        logger.debug('CLUSTER', cluster)
-        intersections = [sp.intersections[intersection_id]
-                         for intersection_id in cluster.keys()]
+        logger.debug("CLUSTER", cluster)
+        intersections = [
+            sp.intersections[intersection_id] for intersection_id in cluster.keys()
+        ]
 
         sheet_ids = set()
         intersides_by_sheet = collections.defaultdict(lambda: [])
@@ -280,8 +277,8 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
             fingers = Geom2D.empty()
             for interside in intersides_by_sheet[sheet.id]:
                 fingers |= interside.make_fingers(
-                    cluster[interside.intersection] &
-                    sb.interside_ok[interside.id])
+                    cluster[interside.intersection] & sb.interside_ok[interside.id]
+                )
             areas.append(fingers.area())
 
             # Check whether we need extra connection to the
@@ -300,7 +297,7 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
 
         if needs_extra[choice]:
             found = False
-            logger.debug(f'NEEDS EXTRA {choice} {sheet.id} {cluster}')
+            logger.debug(f"NEEDS EXTRA {choice} {sheet.id} {cluster}")
             for interside in intersides_by_sheet[sheet.id]:
                 # logger.debug(interside.id, sb.interside_ok[interside.id],
                 #    interside)
@@ -314,9 +311,10 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
                 max_range &= sb.interside_ok[interside.id]
                 max_range -= default_range
 
-                extra_ints = sorted(max_range.intervals,
-                                    key=lambda iv: (iv[1] - iv[0], iv[0]))
-                logger.debug(f'  EXTRA INTS f{interside.id} f{max_range}')
+                extra_ints = sorted(
+                    max_range.intervals, key=lambda iv: (iv[1] - iv[0], iv[0])
+                )
+                logger.debug(f"  EXTRA INTS f{interside.id} f{max_range}")
                 # logger.debug(extra_ints)
                 if len(extra_ints) == 0:
                     continue
@@ -324,20 +322,26 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
                 extra_interval = extra_ints[-1]
 
                 if extra_interval[1] - extra_interval[0] < 0.5 * min_finger:
-                    logger.debug('  TOO SMALL')
+                    logger.debug("  TOO SMALL")
                     continue
 
                 found = True
                 # logger.debug(extra_interval)
                 cluster = cluster.transform(
-                        [interside.intersection],
-                        lambda prev: prev | Geom1D([extra_interval, ]))
+                    [interside.intersection],
+                    lambda prev: prev
+                    | Geom1D(
+                        [
+                            extra_interval,
+                        ]
+                    ),
+                )
                 break
 
             if not found:
-                raise Exception('NOT FOUND %s' % cluster)
+                raise Exception("NOT FOUND %s" % cluster)
         else:
-            logger.debug(f'NO EXTRA f{choice} {sheet.id} f{cluster}')
+            logger.debug(f"NO EXTRA f{choice} {sheet.id} f{cluster}")
 
         # Choose the side of the joint
         # on all intersides on the chosen sheet
@@ -345,12 +349,17 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
         sb.check()
         # logger.debug("   OK %s\n     CHOSEN %s",
         #    sb.interside_ok, sb.interside_chosen)
-        logger.debug('Make choices')
+        logger.debug("Make choices")
         for interside in intersides_by_sheet[sheets[choice].id]:
-            logger.debug('Choose: %s %s %s', interside.id,
-                         cluster[interside.intersection], cluster)
-            chosen_range = (cluster[interside.intersection] &
-                            sb.interside_ok[interside.id])
+            logger.debug(
+                "Choose: %s %s %s",
+                interside.id,
+                cluster[interside.intersection],
+                cluster,
+            )
+            chosen_range = (
+                cluster[interside.intersection] & sb.interside_ok[interside.id]
+            )
             sb = sb.choose_interside(interside.id, chosen_range)
 
         # Unchoose all other intersides
@@ -359,14 +368,14 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
             other_intersection = sp.intersections[other_intersection_id]
             for side in other_intersection.sides:
                 if side.sheet != sheets[choice].id:
-                    logger.debug('  Unchoose %s %s', side.id, rnge)
+                    logger.debug("  Unchoose %s %s", side.id, rnge)
                     sb = sb.unchoose_interside(side.id, rnge)
 
-        logger.debug("   OK %s\n     CHOSEN %s",
-                     sb.interside_ok, sb.interside_chosen)
+        logger.debug("   OK %s\n     CHOSEN %s", sb.interside_ok, sb.interside_chosen)
         sb.check()
 
     return sb
+
 
 # def resolve_multi_intersections_1(sb, multi):
 
@@ -391,7 +400,7 @@ def choose_the_ok_side(sb, params=None):
             this_only = this_only.buffer(-buf).buffer(buf)
             small_bits = orig_this_only - this_only
 
-            logger.debug('Choose onlyok: %s %s', interside.id, this_only)
+            logger.debug("Choose onlyok: %s %s", interside.id, this_only)
             sb = sb.choose_interside(interside.id, this_only)
             sb = sb.unchoose_interside(interside.id, small_bits)
 
@@ -428,15 +437,14 @@ def random_min_max(n, mn, mx, total, rng):
     for i in range(n):
         result.append((cur_sum, cur_sum + lengths[i]))
         cur_sum += lengths[i]
-    assert cur_sum - \
-        total < 1e-8, (lengths, sum(lengths), result, cur_sum, total)
+    assert cur_sum - total < 1e-8, (lengths, sum(lengths), result, cur_sum, total)
     return result
 
 
 def single_fingers_random(sb, params=None):
-    min_width = params['min_finger_width']
-    max_width = params['max_finger_width']
-    seed = params['random_seed']
+    min_width = params["min_finger_width"]
+    max_width = params["max_finger_width"]
+    seed = params["random_seed"]
     sb.check()
     rng = np.random.RandomState(seed)
     # XXX Assert that there are no multiple intersections
@@ -450,24 +458,27 @@ def single_fingers_random(sb, params=None):
         ok = [sb.interside_ok[side.id] for side in sides]
         chosen = [sb.interside_chosen[side.id] for side in sides]
         available = [ok[i] - chosen[i] for i in range(len(ok))]
-        assert (available[0] ^ available[1]).measure1d(
-        ) < 1e-8, (intersection, ok[0], ok[1], available[0], available[1])
+        assert (available[0] ^ available[1]).measure1d() < 1e-8, (
+            intersection,
+            ok[0],
+            ok[1],
+            available[0],
+            available[1],
+        )
         # Start assigning by intervals
         for (start, end) in available[0].intervals:
-            logger.debug(
-                f'{intersection.id} : {fastr(start, end)}')
+            logger.debug(f"{intersection.id} : {fastr(start, end)}")
             geom1d = Geom1D([(start, end)])
             end_dist = 2
             on_side = []
-            for end_interval in [
-                    (start - end_dist, start),
-                    (end, end + end_dist)]:
+            for end_interval in [(start - end_dist, start), (end, end + end_dist)]:
                 ei = Geom1D([end_interval])
-                on_sides = [(sb.interside_chosen[side.id] & ei).measure1d()
-                            for side in sides]
+                on_sides = [
+                    (sb.interside_chosen[side.id] & ei).measure1d() for side in sides
+                ]
                 on_side.append(np.argmax(on_sides))
 
-            odd = (on_side[0] != on_side[1])
+            odd = on_side[0] != on_side[1]
 
             n_min_base = np.ceil((end - start) / max_width)
             n_max_base = np.floor((end - start) / min_width)
@@ -480,13 +491,13 @@ def single_fingers_random(sb, params=None):
                 n_max = n_max_base - 1 + n_max_base % 2
 
             logger.debug(
-                f'odd {odd} n_min {n_min_base} {n_min}'
-                f' n_max {n_max_base} {n_max}')
+                f"odd {odd} n_min {n_min_base} {n_min}" f" n_max {n_max_base} {n_max}"
+            )
 
             if n_min > n_max:
                 # Can't put even one, continue side 0
                 sb = sb.choose_interside(sides[0].id, geom1d)
-                logger.debug(f'None possible choose side 0: f{sides[0].id}')
+                logger.debug(f"None possible choose side 0: f{sides[0].id}")
                 continue
 
             preferred_min = 5
@@ -496,8 +507,7 @@ def single_fingers_random(sb, params=None):
 
             n = rng.randint(n_min, n_max + 1)
 
-            locations = random_min_max(
-                n, min_width, max_width, end - start, rng)
+            locations = random_min_max(n, min_width, max_width, end - start, rng)
 
             cur_side = 1 - on_side[0]
 
@@ -505,7 +515,7 @@ def single_fingers_random(sb, params=None):
 
             for span_0, span_1 in locations:
                 span = Geom1D([(start + F(span_0), start + F(span_1))])
-                logger.debug('Choose %s %s', sides[cur_side].id, span)
+                logger.debug("Choose %s %s", sides[cur_side].id, span)
                 side_fingers[cur_side] |= span
                 cur_side = 1 - cur_side
 
@@ -513,6 +523,17 @@ def single_fingers_random(sb, params=None):
                 sb = sb.choose_interside(sides[side].id, side_fingers[side])
                 # sb.check()
             # sb.check()
+    return sb
+
+
+def choose_all_ok(sb, params=None):
+    """Choose all "ok" areas to be in.
+
+    To be run after all conflicts resolved.
+    """
+    sp = sb.sheetplex
+    for sheet in sp.sheets.values():
+        sb = sb.choose_sheet_area(sheet.id, sb.sheet_ok[sheet.id])
     return sb
 
 
@@ -530,9 +551,9 @@ def clean_up_thin_ok_parts(sb, params=None):
         # Shapely blows up without the buffer
         ok = ok | chosen  # .buffer(-F(1, 1000))
         sheet_ok = sheet_ok.set(sheet.id, ok)
-    return sb.set('sheet_ok', sheet_ok)
+    return sb.set("sheet_ok", sheet_ok)
 
 
 def select_all(sb, params=None):
     assert 0 == 1, "Doesn't work right for 4-crossings!"
-    return sb.set('sheet_chosen', sb['sheet_ok'])
+    return sb.set("sheet_chosen", sb["sheet_ok"])

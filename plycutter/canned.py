@@ -65,6 +65,7 @@ def canned_1(sheetplex, params, show=False):
             heu.update_intersection_ok,
             heu.choose_the_ok_side,
             heu.single_fingers_random,
+            heu.choose_all_ok,
             heu.clean_up_thin_ok_parts,
             # select_all,
         ]:
