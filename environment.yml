@@ -20,3 +20,4 @@ dependencies:
   - mkdocs-material
   - mkdocs-material-extensions
   - mkdocstrings
+  - openblas
