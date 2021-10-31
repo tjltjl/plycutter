@@ -67,8 +67,11 @@ def main(arguments=sys.argv[1:]):
                         help='Not implemented yet')
 
     parser.add_argument('-o', '--output_file', type=str, default=None,
-                        help='File to write the DXF output in')
-
+                        help='File to write the output in')
+    
+    parser.add_argument('-f', '--format', type=str, default="dxf",
+                        help='dxf or svg output')
+    
     parser.add_argument('infile', type=str,
                         help='STL file to process')
 
@@ -76,8 +79,12 @@ def main(arguments=sys.argv[1:]):
 
     infile = pathlib.Path(args.infile)
 
+    args.format = args.format.lower()
+    if args.format not in ('svg', 'dxf'):
+        raise Exception("Improper file format")
+
     if args.output_file is None:
-        outfile = infile.with_suffix('.dxf')
+        outfile = infile.with_suffix("." + args.format)
     else:
         outfile = args.output_file
 
@@ -103,6 +110,9 @@ def main(arguments=sys.argv[1:]):
     }
     print(to_write_dilated)
 
-    writer.write_dxf(str(outfile), to_write_dilated)
+    if args.format == 'dxf':
+        writer.write_dxf(str(outfile), to_write_dilated)
+    elif args.format == 'svg':
+        writer.write_svg(str(outfile), to_write_dilated)
 
     logger.info('Done!')
