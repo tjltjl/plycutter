@@ -1,0 +1,801 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
+    
+      
+        <title>Internals for developers - PlyCutter</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a57b2b03.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#internals-for-developers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="PlyCutter" class="md-header__button md-logo" aria-label="PlyCutter" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PlyCutter
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Internals for developers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="PlyCutter" class="md-nav__button md-logo" aria-label="PlyCutter" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PlyCutter
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Plycutter - STL to finger-jointed DXF slicer
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Gallery
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Gallery" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Gallery
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gallery/format/" class="md-nav__link">
+        Gallery format
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gallery/dollhouse/" class="md-nav__link">
+        Dollhouse
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acknowledgments/" class="md-nav__link">
+        Acknowledgments
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Internals for developers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Internals for developers
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#coding-standard" class="md-nav__link">
+    Coding standard
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter-process" class="md-nav__link">
+    Plycutter process
+  </a>
+  
+    <nav class="md-nav" aria-label="Plycutter process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sheetplex" class="md-nav__link">
+    SheetPlex
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sheetbuild" class="md-nav__link">
+    SheetBuild
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#heuristics" class="md-nav__link">
+    Heuristics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeout" class="md-nav__link">
+    Writeout
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#libraries" class="md-nav__link">
+    Libraries
+  </a>
+  
+    <nav class="md-nav" aria-label="Libraries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#geometry" class="md-nav__link">
+    Geometry
+  </a>
+  
+    <nav class="md-nav" aria-label="Geometry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#geom1d" class="md-nav__link">
+    Geom1D
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geom2d" class="md-nav__link">
+    Geom2D
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/plycutter/" class="md-nav__link">
+        API documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/plycutter/sheetplex/" class="md-nav__link">
+        plycutter.sheetplex
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/plycutter/sheetbuild/" class="md-nav__link">
+        plycutter.sheetbuild
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/plycutter/heuristics.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/plycutter/geometry/geom1d/" class="md-nav__link">
+        plycutter.geometry.geom1d
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/plycutter/geometry/geom2d/" class="md-nav__link">
+        plycutter.geometry.geom2d
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#coding-standard" class="md-nav__link">
+    Coding standard
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter-process" class="md-nav__link">
+    Plycutter process
+  </a>
+  
+    <nav class="md-nav" aria-label="Plycutter process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sheetplex" class="md-nav__link">
+    SheetPlex
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sheetbuild" class="md-nav__link">
+    SheetBuild
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#heuristics" class="md-nav__link">
+    Heuristics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeout" class="md-nav__link">
+    Writeout
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#libraries" class="md-nav__link">
+    Libraries
+  </a>
+  
+    <nav class="md-nav" aria-label="Libraries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#geometry" class="md-nav__link">
+    Geometry
+  </a>
+  
+    <nav class="md-nav" aria-label="Geometry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#geom1d" class="md-nav__link">
+    Geom1D
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geom2d" class="md-nav__link">
+    Geom2D
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="internals-for-developers">Internals for developers</h1>
+<h2 id="coding-standard">Coding standard</h2>
+<ul>
+<li>
+<p>PEP8 (autopep8).</p>
+</li>
+<li>
+<p>flake8 must pass with no warnings.</p>
+</li>
+<li>
+<p>Prefer immutable objects wherever appropriate.</p>
+</li>
+<li>
+<p>Use exact rational numbers wherever appropriate.
+  Do approximate operations only at points where it does not
+  hurt the exactness of the results.
+  The reason for this is that using exact 2D geometry
+  gets rid of a lot of possible problem cases due to
+  e.g. triangle flipping due to rounding errors.</p>
+</li>
+</ul>
+<h2 id="plycutter-process">Plycutter process</h2>
+<p>There are three different stages to plycutter:</p>
+<ul>
+<li>
+<p>Reading the .STL file into a <code>SheetPlex</code>.</p>
+</li>
+<li>
+<p>Creating a "free" <code>SheetBuild</code> 
+  object and incrementally making heuristic choices
+  within it.</p>
+</li>
+<li>
+<p>Post-processing and writing out the .dxf files.</p>
+</li>
+</ul>
+<h3 id="sheetplex">SheetPlex</h3>
+<p>A <code>SheetPlex</code> is a mostly policy-free representation
+of the input model, after finding where the possible
+sheets in the input model are.</p>
+<p>It contains slices through the input model to provide
+information for the heuristics as well as the relationships
+between the sheets.</p>
+<p>Intersections between sheets are represented,
+as well as the projection of the intersection to either of
+the sheets involved (this is important for the heuristics)</p>
+<h3 id="sheetbuild">SheetBuild</h3>
+<p>A <code>SheetBuild</code> is the "blackboard" object used by the heuristic
+routines. It starts life as a very open description
+of the situation
+("there could be material here on this sheet and here")
+and as the heuristics progress, they make decisions
+and convert some possible points to certainty
+and some to impossibility, thereby creating the joint
+between two sheets.</p>
+<p>A SheetBuild is a persistent map implemented
+using <code>pyrsistent</code>. This way, none of the functions <em>modify</em>
+anything but only return a new version.</p>
+<p>This makes debugging the heuristics a <em>lot</em> easier since
+it is easy to save the state at each point in the heuristics
+chain and rerun a particular step with changed code,
+with confidence that things are as they should be.</p>
+<h3 id="heuristics">Heuristics</h3>
+<p>The heuristics start by looking at the proposed joints
+to see which parts are clearly not meant to be implemented
+by a particular sheet (just slicing the 3D model produces
+surprising things here that the heuristics mostly remove).</p>
+<p>After this, the heuristics look at multi-intersections, i.e.,
+the intersections of more than two sheets since those regions
+require special care.</p>
+<p>Currently, one sheet is chosen for all of such an area
+(this is a feature where improvements are still needed).</p>
+<p>After this, the heuristics look at the two-sheet intersections
+and generate fingers there.</p>
+<p>The heuristics are in the package <code>plycutter.heuristics</code>
+and their driver is in <code>plycutter.canned</code>.</p>
+<h3 id="writeout">Writeout</h3>
+<p>Currently, the only postprocessing is the kerf compensation
+by a fixed amount. More could be added here, such as
+dog-bone compensation (though that might also belong
+in an earlier stage, this needs to be figured out when adding it)</p>
+<h2 id="libraries">Libraries</h2>
+<p>Plycutter includes some libraries to provide a good API
+for implementing the heuristics.</p>
+<h3 id="geometry">Geometry</h3>
+<p>The main library components are the <code>Geom1D</code> and
+<code>Geom2D</code> classes.
+They implement exact polygonal sets in 1D and 2D space,
+in a way that disallows zero-measure object droppings
+or cavities.
+This is the same as 'regularized boolean set-operations' in
+CGAL.</p>
+<h4 id="geom1d">Geom1D</h4>
+<h4 id="geom2d">Geom2D</h4>
+<p>The implementation of <code>Geom2D</code>
+is the largest part of plycutter currently; replacing
+this with a better, external implementation would be wonderful.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../acknowledgments/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Acknowledgments" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Acknowledgments
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../api/plycutter/" class="md-footer__link md-footer__link--next" aria-label="Next: API documentation" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              API documentation
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.b1047164.min.js"></script>
+      
+    
+  </body>
+</html>

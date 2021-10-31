@@ -1,0 +1,909 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
+    
+      
+        <title>PlyCutter</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.a57b2b03.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#plycutter-stl-to-finger-jointed-dxf-slicer" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="PlyCutter" class="md-header__button md-logo" aria-label="PlyCutter" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PlyCutter
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Plycutter - STL to finger-jointed DXF slicer
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="PlyCutter" class="md-nav__button md-logo" aria-label="PlyCutter" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PlyCutter
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Plycutter - STL to finger-jointed DXF slicer
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Plycutter - STL to finger-jointed DXF slicer
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#purpose-use-cases" class="md-nav__link">
+    Purpose / use cases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-plycutter" class="md-nav__link">
+    Installing plycutter
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing plycutter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installing-dependencies" class="md-nav__link">
+    Installing dependencies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-plycutter-itself" class="md-nav__link">
+    Installing plycutter itself
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing plycutter itself">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conventional-method-using-setuppy" class="md-nav__link">
+    Conventional method using setup.py
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pipx" class="md-nav__link">
+    Using pipx
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage-getting-started" class="md-nav__link">
+    Basic usage; Getting started
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter-command-line-options" class="md-nav__link">
+    plycutter Command line options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-most-relevant-known-limitations" class="md-nav__link">
+    The most relevant known limitations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Gallery
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Gallery" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Gallery
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gallery/format/" class="md-nav__link">
+        Gallery format
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gallery/dollhouse/" class="md-nav__link">
+        Dollhouse
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="acknowledgments/" class="md-nav__link">
+        Acknowledgments
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dev/" class="md-nav__link">
+        Internals for developers
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/plycutter/" class="md-nav__link">
+        API documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/plycutter/sheetplex/" class="md-nav__link">
+        plycutter.sheetplex
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/plycutter/sheetbuild/" class="md-nav__link">
+        plycutter.sheetbuild
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/plycutter/heuristics.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/plycutter/geometry/geom1d/" class="md-nav__link">
+        plycutter.geometry.geom1d
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/plycutter/geometry/geom2d/" class="md-nav__link">
+        plycutter.geometry.geom2d
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#purpose-use-cases" class="md-nav__link">
+    Purpose / use cases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-plycutter" class="md-nav__link">
+    Installing plycutter
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing plycutter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installing-dependencies" class="md-nav__link">
+    Installing dependencies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-plycutter-itself" class="md-nav__link">
+    Installing plycutter itself
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing plycutter itself">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conventional-method-using-setuppy" class="md-nav__link">
+    Conventional method using setup.py
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pipx" class="md-nav__link">
+    Using pipx
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage-getting-started" class="md-nav__link">
+    Basic usage; Getting started
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter-command-line-options" class="md-nav__link">
+    plycutter Command line options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-most-relevant-known-limitations" class="md-nav__link">
+    The most relevant known limitations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="plycutter-stl-to-finger-jointed-dxf-slicer">Plycutter - STL to finger-jointed DXF slicer</h1>
+<p>Author: Tuomas Lukka, tuomas@hipcode.fi</p>
+<p><a href="https://tjltjl.github.io/plycutter">Official homepage</a></p>
+<p><a href="https://github.com/tjltjl/plycutter">Github repo</a></p>
+<p><a href="https://hipcode.fi/?p=25324">Introductory blog post with lots of pictures</a></p>
+<h2 id="introduction">Introduction</h2>
+<p><img align="right" src="biocta-1.png" alt="CAD model" width="30%"/></p>
+<p>Plycutter is a program that takes a 3D model in an <code>.stl</code> file and
+generates 2D <code>.dxf</code> files suitable for laser cutting, with generated
+finger joints between material sheets where appropriate.</p>
+<p>The 3D needs to
+be designed in a way where the sheets are clearly visible
+(e.g., using the CAD program's 'shell' command).</p>
+<p>Example (images on the right): pen holder consisting of two stacked octahedra
+(scale model from 3mm plywood).</p>
+<ul>
+<li>Top: CAD model. The CAD model was designed as two
+  octahedra on top of each other and the 'shell' command
+  in the CAD program (Fusion 360) was used to produce
+  the shape consisting of sheets. A further cut on the top
+  was made to create the curved edges.
+  This model was then exported as a <code>.stl</code></li>
+</ul>
+<p><img align="right" src="biocta-pattern.png" alt="CAD model" width="71%"/>
+<img align="right" src="biocta-cut-1.jpg" alt="Laser cut output, assembled" width="30%"/></p>
+<ul>
+<li>
+<p>Middle:
+  Result of running plycutter on the <code>.stl</code> file
+  to produce <code>.dxf</code> file for laser cutter.</p>
+</li>
+<li>
+<p>Bottom: the laser-cut plywood parts assembled.
+  In cases where the vertical cuts from the laser cutter
+  cannod exactly follow the model (such as the tips of the top
+  triangle or the non-90-degree joints),
+  plycutter tries to retain as much material as possible
+  so that a quick sanding or filing operation will get
+  the desired shape.</p>
+</li>
+</ul>
+<p>For non-90-degree joints, some gaps are unavoidable but
+  a multitools and wood filler make quick work of those.</p>
+<p>For more showcase images, see <a href="Plycutter%20summary%202022-11-25.pdf">Plycutter summary PDF</a></p>
+<p><strong>Note</strong> Plycutter is alpha-stage software and probably contains
+many bugs. Please report any bugs as issues in the github project,
+preferably with a pull request with a failing test,
+or at least a minimal .stl file and command line for reproducing
+the problem.</p>
+<h2 id="purpose-use-cases">Purpose / use cases</h2>
+<p>Plycutter is at its best for making one-off prototypes
+or small production runs, or for generative objects
+where each object is custom-generated from user input.</p>
+<p>Unlike with 3D printers, the workspace is much larger
+(depending on the laser cutter used; with a little planning,
+it is also possible to make much larger objects than your
+laser cutter - only each sheet must fit).</p>
+<p>The author has personally used it to iterate on some household
+object concepts, where it provides a fast and robust way
+(compared to 3D printing, for example) of iterating
+large objects.</p>
+<p>Currently, the program generates the fingers somewhat randomly
+which makes it next to impossible to assemble the objects
+wrong and also makes them into interesting puzzles.</p>
+<h2 id="installing-plycutter">Installing plycutter</h2>
+<h3 id="installing-dependencies">Installing dependencies</h3>
+<p>On a recent ubuntu, you can do the following.</p>
+<pre><code>    sudo apt-get install libgeos-c1v5 libmpc-dev libspatialindex-dev
+    python -m pip install --upgrade pip
+    python -m pip install flake8 pytest
+    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+</code></pre>
+<p>This is copied from the github test action so it should work
+ok.</p>
+<p>On MacOS, the author uses conda to install the dependencies, see <code>environment.yml</code>.</p>
+<h3 id="installing-plycutter-itself">Installing plycutter itself</h3>
+<h4 id="conventional-method-using-setuppy">Conventional method using <code>setup.py</code></h4>
+<p>To install plycutter into your current python environment, run the command</p>
+<pre><code>    python setup.py install
+</code></pre>
+<p>After this, running <code>plycutter</code> as a shell command should work</p>
+<h4 id="using-pipx">Using <code>pipx</code></h4>
+<p>It is also possible to install plycutter and its dependencies via <a href="https://github.com/pipxproject/pipx">pipx</a>.</p>
+<pre><code>    pipx install git+https://github.com/tjltjl/plycutter.git
+</code></pre>
+<p>See the <code>pipx</code> dodumentation for details</p>
+<h2 id="basic-usage-getting-started">Basic usage; Getting started</h2>
+<p>Install plycutter. Run the tests (pytest) to ensure all dependencies work.</p>
+<p>Next, run the input file <code>PlyTest0.1.stl</code> which contains a very
+simple object consisting of two sheets that meet at a corner.</p>
+<p><img src="plytest0.1.stl.png" alt="STL contents" width="30%"/></p>
+<p>We run plycutter from the command line using the following command:</p>
+<pre><code>    plycutter -o foo.dxf --thickness 6 ./tests/data/PlyTest0.1.stl
+</code></pre>
+<p>which produces the output <code>foo.dxf</code>. You can open it in, e.g., Inkscape.
+The following image shows the contents of such a file;
+the lines on the left and on the bottom are Inkscape's paper edge.</p>
+<p><img src="plytest0.1.dxf.png" alt="STL contents" width="30%"/></p>
+<p>Now it is possible to run this file in a laser cutter to obtain
+two pieces of e.g. plywood or acrylic that
+fit each other perfectly.</p>
+<h2 id="plycutter-command-line-options"><code>plycutter</code> Command line options</h2>
+<pre><code>    usage: plycutter [-h] [--thickness THICKNESS]
+                     [--min_finger_width MIN_FINGER_WIDTH]
+                     [--max_finger_width MAX_FINGER_WIDTH]
+                     [--support_radius SUPPORT_RADIUS] [--debug]
+                     [--final_dilation FINAL_DILATION] [--random_seed RANDOM_SEED]
+                     [--only_sheets ONLY_SHEETS] [-o OUTPUT_FILE]
+                     infile
+
+    positional arguments:
+      infile                STL file to process
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --thickness THICKNESS
+                            Set the thickness of sheets to find. (default: 6)
+      --min_finger_width MIN_FINGER_WIDTH
+                            Set minimum width for generated fingers. (default: 3)
+      --max_finger_width MAX_FINGER_WIDTH
+                            Set maximum width for generated fingers. (default: 5)
+      --support_radius SUPPORT_RADIUS
+                            Set maximum range for generating material on a sheet
+                            where neither surface is visible (default: 12)
+      --debug               Turn on debugging. (default: False)
+      --final_dilation FINAL_DILATION
+                            Final dilation (laser cutter kerf compensation)
+                            (default: 1/20)
+      --random_seed RANDOM_SEED
+                            Random seed for pseudo-random heuristics (default: 42)
+      --only_sheets ONLY_SHEETS
+                            Not implemented yet (default: None)
+      -o OUTPUT_FILE, --output_file OUTPUT_FILE
+                            File to write the DXF output in (default: None)
+</code></pre>
+<h2 id="the-most-relevant-known-limitations">The most relevant known limitations</h2>
+<p>Plycutter is a hobby project, published in hope that it will be
+useful.  Currently, the author (Tuomas Lukka) is in freelancer mode
+so feel free to contact the author to offer a consulting gig if
+there is a particular limitation you would like to see get worked
+on ASAP (or for other projects :) ).</p>
+<ul>
+<li>
+<p>For large models and models with many curves, plycutter is
+  currently relatively slow.
+  Even for small models, getting some speedup would be
+  very welcome.
+  The slowness is due to the exact 2D library that was written
+  as a quick replacement to a commonly used
+  off-the-shelf Python 2D library when it turned
+  out that rounding errors from floats
+  made it impossible to use
+  in this work (the joint fingers are generated along linees
+  and getting rounding errors that flip vertices'
+  area were causing assertion failures).
+  There are several badly scaling algorithms in plycutter's
+  own 2D geometry library and those
+  algorithms need to be replaced with faster
+  ones.
+  The ideal solutioin would be to replace the 2D library
+  wth an external one that
+  can do exact, rational geometry fast, but so far,
+  I have not had success with this.
+  The <code>Geom2D</code> API has been kept simple for this reason.</p>
+</li>
+<li>
+<p>Shallow joints (between 135 and 180 degrees)
+  are currently handled badly, with finger lengths becoming
+  extreme.
+  The system should understand when it does not make sense
+  to make the fingers longer.</p>
+</li>
+<li>
+<p>Long joints where more than 2 sheets meet are handled very
+  rudimentarily and can produce unexpected results.
+  Writing an algorithm that does better is fairly
+  straightforward but hasn't been done yet.
+  The function that makes the simplistic decisions is
+  <code>heuristic_multi_inter_single_decisions</code>
+  in <code>plycutter/heuristics.py</code>. </p>
+</li>
+<li>
+<p>For two sheets that cross each other in an "X" shape,
+  plycutter will currently produce output that would only
+  be assemblable in 4D. I.e. it will produce holes on both
+  sheets that would fit together if it were possible
+  to assemble the sheets. The real solution here is to allow
+  plycutter to cut one of the sheets into parts but doing
+  that correctly requires...</p>
+</li>
+<li>
+<p>...buildability analysis. It is possible to make 2D patterns
+  that cannot be assembled. For example, the two interlocking
+  cubes example could have produced such a pattern but luckily
+  did not.</p>
+</li>
+<li>
+<p>Curved sheets are not yet supported (curved sheet <strong>edges</strong>
+  work fine; of course they get subdivided into
+  lines in the STL export).
+  The architecture is should be fairly easy
+  to extend in that direction:
+  the <code>Sheet</code>, <code>Inter</code> and <code>InterSide</code> objects are designed
+  in a way that may make this easy.
+  Representing the <code>InterSide</code> as a subdivided polygonal
+  curve is probably the easiest approach to integrate
+  with the current <code>Geom2D</code> code.
+  Naturally, the curved sheets should only be <a href="https://en.wikipedia.org/wiki/Developable_surface">developable
+  surfaces(Wikipedia)</a></p>
+</li>
+<li>
+<p>Currently, plycutter is not able to make use of the capabilities
+  of 5-axis laser or water cutters or mills,
+  mostly because the author has no access to such machines.
+  If you are able to arrange such access, please get in touch.
+  The biggest plus of 5 axes is that in non-90-degree joints,
+  there will be no gaps or protruding parts.
+  However, it gets better: 5 axes will enable a wide
+  variety of joint shapes.</p>
+</li>
+<li>
+<p>Milling or water cutting may require dog bone corners which
+  are also not implemented for the above reason.</p>
+</li>
+<li>
+<p>The joint pieces that belong together are not marked in any way
+  currently. Adding a laser-carved number would be a great way
+  to help the assembly process when there are many parts
+  (for example, the dollhouse stairs were quite an interesting
+  task to assemble...)</p>
+</li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+      
+        
+        <a href="gallery/format/" class="md-footer__link md-footer__link--next" aria-label="Next: Gallery format" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Gallery format
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.b1047164.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,968 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
+    
+      
+        <title>plycutter.geometry.geom1d - PlyCutter</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.a57b2b03.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#plycuttergeometrygeom1d" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="PlyCutter" class="md-header__button md-logo" aria-label="PlyCutter" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PlyCutter
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              plycutter.geometry.geom1d
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="PlyCutter" class="md-nav__button md-logo" aria-label="PlyCutter" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PlyCutter
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        Plycutter - STL to finger-jointed DXF slicer
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Gallery
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Gallery" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Gallery
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../gallery/format/" class="md-nav__link">
+        Gallery format
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../gallery/dollhouse/" class="md-nav__link">
+        Dollhouse
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../acknowledgments/" class="md-nav__link">
+        Acknowledgments
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../dev/" class="md-nav__link">
+        Internals for developers
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        API documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sheetplex/" class="md-nav__link">
+        plycutter.sheetplex
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sheetbuild/" class="md-nav__link">
+        plycutter.sheetbuild
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../heuristics.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          plycutter.geometry.geom1d
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        plycutter.geometry.geom1d
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#plycuttergeometrygeom1dgeom1d" class="md-nav__link">
+    plycutter.geometry.geom1d.Geom1D
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D" class="md-nav__link">
+    plycutter.geometry.geom1d.Geom1D
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D-methods" class="md-nav__link">
+    Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.buffer" class="md-nav__link">
+    buffer()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.disjoint_pieces" class="md-nav__link">
+    disjoint_pieces()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.empty" class="md-nav__link">
+    empty()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.filter" class="md-nav__link">
+    filter()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.full" class="md-nav__link">
+    full()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.is_bounded" class="md-nav__link">
+    is_bounded()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.is_empty" class="md-nav__link">
+    is_empty()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.locate" class="md-nav__link">
+    locate()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.measure1d" class="md-nav__link">
+    measure1d()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../geom2d/" class="md-nav__link">
+        plycutter.geometry.geom2d
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#plycuttergeometrygeom1dgeom1d" class="md-nav__link">
+    plycutter.geometry.geom1d.Geom1D
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D" class="md-nav__link">
+    plycutter.geometry.geom1d.Geom1D
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D-methods" class="md-nav__link">
+    Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.buffer" class="md-nav__link">
+    buffer()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.disjoint_pieces" class="md-nav__link">
+    disjoint_pieces()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.empty" class="md-nav__link">
+    empty()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.filter" class="md-nav__link">
+    filter()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.full" class="md-nav__link">
+    full()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.is_bounded" class="md-nav__link">
+    is_bounded()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.is_empty" class="md-nav__link">
+    is_empty()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.locate" class="md-nav__link">
+    locate()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plycutter.geometry.geom1d.Geom1D.measure1d" class="md-nav__link">
+    measure1d()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="plycuttergeometrygeom1d">plycutter.geometry.geom1d</h1>
+<h2 id="plycuttergeometrygeom1dgeom1d">plycutter.geometry.geom1d.Geom1D</h2>
+
+
+  <div class="doc doc-object doc-class">
+
+<a id="plycutter.geometry.geom1d.Geom1D"></a>
+    <div class="doc doc-contents first">
+
+      <p>Immutable sum of closed-open intervals of an 1D line.</p>
+<p>Supports the set operations <code>&amp;</code>, <code>|</code>, <code>^</code>, <code>-</code>
+as well as <code>~</code>..</p>
+<p>Basically, open intervals except that a union
+of (0, 1) and (1, 2) is (0, 2). One way to accomplish this
+theoretically is by not including the constructible numbers
+in the domain.</p>
+<p>So none of the exact numbers 0, 1 or 2 can ever be part of the
+infinite set of numbers contained there, only
+numbers that are greater or less, so then the middle point
+gets removed nicely.</p>
+<p>A simpler, equivalent definition is to use lower-bound closed,
+upper-bound open intervals a la Python ranges but the above
+is more symmetric in definition wrt the real numbers. :)</p>
+<p>Note that - is defined as set difference.</p>
+<p>The intervals can contain infinities.</p>
+<pre><code>    g = Geom1D([[0, 1], [2, 3]])
+    g.locate(-1) --&gt; -1
+    g.locate(0) --&gt; 0
+    g.locate(0.5) --&gt; 1
+    g.locate(1.5) --&gt; 0
+
+    h = Geom1D([[1, 3]])
+
+    i = g &amp; h  # Equivalent to Geom1D([[2, 3]])
+    j = g | h  # Equivalent to Geom1D([[0, 3]])
+    k = g - h  # Equivalent to Geom1D([[0, 1]])
+    l = g ^ h  # Equivalent to Geom1D([[0, 2]])
+    m = ~h     # Equivalent to Geom1D([[-inf, 1], [3, inf]])
+</code></pre>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<h2 id="plycutter.geometry.geom1d.Geom1D-methods">Methods</h2>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.buffer">
+<code class="highlight language-python"><span class="n">buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Minkowski sum with the interval [-amount, amount].</p>
+<p>Amount can be negative to reduce the area.</p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.disjoint_pieces">
+<code class="highlight language-python"><span class="n">disjoint_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return separate Geom1D pieces for disjoint intervals in self.</p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.empty">
+<code class="highlight language-python"><span class="n">empty</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return an empty Geom1D.</p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.filter">
+<code class="highlight language-python"><span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Filter all disjoint intervals in this Geom1D through the function
+and return a new Geom1D with those intervals that pass the filter.</p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.full">
+<code class="highlight language-python"><span class="n">full</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return a Geom1D that covers the full real line.</p>
+
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.is_bounded">
+<code class="highlight language-python"><span class="n">is_bounded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return true if the region described by this Geom1D is bounded.</p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.is_empty">
+<code class="highlight language-python"><span class="n">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return true if this Geom1D is empty, i.e. 0-measure.</p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.locate">
+<code class="highlight language-python"><span class="n">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>1 = in
+-1 = out
+0 = indeterminate, possibly on edge,
+    possibly on internal, virtual edge</p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="plycutter.geometry.geom1d.Geom1D.measure1d">
+<code class="highlight language-python"><span class="n">measure1d</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the 1d measure (in length) of this object</p>
+
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../sheetbuild/" class="md-footer__link md-footer__link--prev" aria-label="Previous: plycutter.sheetbuild" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              plycutter.sheetbuild
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../geom2d/" class="md-footer__link md-footer__link--next" aria-label="Next: plycutter.geometry.geom2d" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              plycutter.geometry.geom2d
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.b1047164.min.js"></script>
+      
+    
+  </body>
+</html>
