@@ -98,7 +98,9 @@ class SheetBuild(pyr.PRecord, Autocompletable):
 
     def choose_sheet_area(self, sheet_id, area):
         assert area.area() - (self.sheet_ok[sheet_id] & area).area() < 1e-5
-        return self.transform(["sheet_chosen", sheet_id], lambda orig: orig | area)
+        return self.transform(
+            ["sheet_chosen", sheet_id], lambda orig: orig | area
+        )
 
     def unchoose_intersides(self, unchoices):
         for interside_id, v in unchoices.items():
@@ -117,7 +119,9 @@ class SheetBuild(pyr.PRecord, Autocompletable):
         opposite = interside.opposite(self.sheetplex)
 
         opposite_2d = opposite.make_fingers(v)
-        assert (opposite_2d & self.sheet_chosen[opposite.sheet]).area() < 1e-6, (
+        assert (
+            opposite_2d & self.sheet_chosen[opposite.sheet]
+        ).area() < 1e-6, (
             (opposite_2d & self.sheet_chosen[opposite.sheet]).area(),
             interside.sheet,
             opposite.sheet,
@@ -136,7 +140,9 @@ class SheetBuild(pyr.PRecord, Autocompletable):
             sheet_ok=map_sub_geom(
                 self.sheet_ok, opposite.sheet, opposite.make_fingers(v)
             ),
-            interside_chosen=map_or_geom(self.interside_chosen, interside_id, v),
+            interside_chosen=map_or_geom(
+                self.interside_chosen, interside_id, v
+            ),
             interside_ok=map_sub_geom(self.interside_ok, opposite.id, v),
         )
 
@@ -173,7 +179,8 @@ class SheetBuild(pyr.PRecord, Autocompletable):
             opposite = interside.opposite(sp)
             # Check that interside_chosen <= interside_ok
             assert (
-                self.interside_chosen[interside.id] - self.interside_ok[interside.id]
+                self.interside_chosen[interside.id]
+                - self.interside_ok[interside.id]
             ).measure1d() < 1e-7, (
                 interside.id,
                 (
@@ -186,7 +193,8 @@ class SheetBuild(pyr.PRecord, Autocompletable):
 
             # Check that intersection can be chosen only by one side
             assert (
-                self.interside_chosen[interside.id] & self.interside_ok[opposite.id]
+                self.interside_chosen[interside.id]
+                & self.interside_ok[opposite.id]
             ).is_empty()
 
             # Check that interside_ok for an opposing side is unable
@@ -209,7 +217,9 @@ class SheetBuild(pyr.PRecord, Autocompletable):
 
 def map_or_geom(mapping, key, geom):
     """For a pyrsistent map, result of map[key] |= geom"""
-    return mapping.set(key, (mapping.get(key) or geom.__class__.empty()) | geom)
+    return mapping.set(
+        key, (mapping.get(key) or geom.__class__.empty()) | geom
+    )
 
 
 def map_and_geom(mapping, key, geom):
@@ -259,13 +269,17 @@ def create_sheetbuild(sp, params):
         for sheet in sp.sheets.values()
     }
 
-    interside_chosen = {interside.id: Geom1D.empty() for interside in sp.intersides()}
+    interside_chosen = {
+        interside.id: Geom1D.empty() for interside in sp.intersides()
+    }
 
     interside_ok = {
         interside.id: interside.project_to_1d(
             sheet_ok[interside.sheet]
             & sp.sheets[interside.sheet].slices_max
-            & interside.make_fingers(Geom1D([[Fraction(-1000), Fraction(1000)]]))
+            & interside.make_fingers(
+                Geom1D([[Fraction(-1000), Fraction(1000)]])
+            )
         )
         for interside in sp.intersides()
     }
@@ -291,7 +305,9 @@ def create_sheetbuild(sp, params):
 
 def show_sheet(ax, sheetplex, sheetbuild, sheet_id):
     """Show a sheet build progress in a matplotlib axes object."""
-    sheetplex.sheets[sheet_id].slices_max.show2d(ax, "white", alpha=1.0, linewidth=1)
+    sheetplex.sheets[sheet_id].slices_max.show2d(
+        ax, "white", alpha=1.0, linewidth=1
+    )
     sheetbuild.sheet_ok[sheet_id].show2d(ax, "green", alpha=1.0)
     sheetbuild.sheet_chosen[sheet_id].show2d(ax, "cyan", linewidth=1)
 

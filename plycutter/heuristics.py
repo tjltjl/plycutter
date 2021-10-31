@@ -48,11 +48,15 @@ def choose_obviously_irrelevant(sb, params=None):
     for interside in sp.intersides():
         ok = sb.interside_ok[interside.id]
         fing = interside.make_fingers(ok.buffer(F(1, 100)))
-        outside = sp.sheets[interside.sheet].slices_max & fing.buffer(F(1, 100))
+        outside = sp.sheets[interside.sheet].slices_max & fing.buffer(
+            F(1, 100)
+        )
         outside -= fing.buffer(F(1, 1000))
         outsideless = ~interside.project_to_1d(outside)
         opposite = interside.opposite(sp)
-        unchoices[interside.id] = outsideless & ok & sb.interside_ok[opposite.id]
+        unchoices[interside.id] = (
+            outsideless & ok & sb.interside_ok[opposite.id]
+        )
         # logger.debug(interside.id, outsideless, ok, outsideless & ok)
 
     # logger.debug(choices)
@@ -88,7 +92,9 @@ def update_intersection_ok(sb, params=None):
         ok = sb.interside_ok[interside.id]
         fing = interside.make_fingers(ok.buffer(F(1, 10)))
         max_fing = fing & sb.sheet_ok[interside.sheet]  # .buffer(-.001)
-        unsupported = interside.project_to_1d(fing) - interside.project_to_1d(max_fing)
+        unsupported = interside.project_to_1d(fing) - interside.project_to_1d(
+            max_fing
+        )
         sb = sb.transform(
             ["interside_ok", interside.id],
             lambda old: old - unsupported.buffer(F(1, 1000)),
@@ -107,7 +113,9 @@ def update_sheet_ok(sb, params=None):
         ok_on_interside = Geom2D.empty()
         for interside in sp.intersides(sheet.id):
             opposite = interside.opposite(sp)
-            ok_on_interside |= interside.make_fingers(sb.interside_ok[interside.id])
+            ok_on_interside |= interside.make_fingers(
+                sb.interside_ok[interside.id]
+            )
             on_interside |= interside.make_fingers(
                 sb.interside_ok[interside.id] | sb.interside_ok[opposite.id]
             )
@@ -150,10 +158,14 @@ def _find_interactions(sb):
     for sheet in sp.sheets.values():
         intersides = list(sp.intersides(sheet.id))
         for i, i_interside in enumerate(intersides):
-            i_fingers = i_interside.make_fingers(sb.interside_ok[i_interside.id])
+            i_fingers = i_interside.make_fingers(
+                sb.interside_ok[i_interside.id]
+            )
 
             for j_interside in intersides[i + 1 :]:
-                j_fingers = j_interside.make_fingers(sb.interside_ok[j_interside.id])
+                j_fingers = j_interside.make_fingers(
+                    sb.interside_ok[j_interside.id]
+                )
                 double = i_fingers & j_fingers
                 if not double.is_empty():
                     i_double = i_interside.project_to_1d(double)
@@ -177,10 +189,7 @@ def _find_interactions(sb):
                         )
                     )
 
-    return _Interactions(
-        sheetplex=sb.sheetplex,
-        by_intersection=interactions,
-    )
+    return _Interactions(sheetplex=sb.sheetplex, by_intersection=interactions,)
 
 
 def _find_interaction_clusters(sb, interactions):
@@ -190,12 +199,17 @@ def _find_interaction_clusters(sb, interactions):
 
     n = 0
 
-    for intersection_id, interaction_list in interactions.by_intersection.items():
+    for (
+        intersection_id,
+        interaction_list,
+    ) in interactions.by_intersection.items():
         # logger.debug("\n", intersection_id)
         for interaction in interaction_list:
             cmap = pyr.pmap(
                 {
-                    sp.interside(interaction.interside).intersection: interaction.range,
+                    sp.interside(
+                        interaction.interside
+                    ).intersection: interaction.range,
                     sp.interside(
                         interaction.other_interside
                     ).intersection: interaction.other_range,
@@ -254,7 +268,8 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
     for cluster in clusters.values():
         logger.debug("CLUSTER", cluster)
         intersections = [
-            sp.intersections[intersection_id] for intersection_id in cluster.keys()
+            sp.intersections[intersection_id]
+            for intersection_id in cluster.keys()
         ]
 
         sheet_ids = set()
@@ -277,7 +292,8 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
             fingers = Geom2D.empty()
             for interside in intersides_by_sheet[sheet.id]:
                 fingers |= interside.make_fingers(
-                    cluster[interside.intersection] & sb.interside_ok[interside.id]
+                    cluster[interside.intersection]
+                    & sb.interside_ok[interside.id]
                 )
             areas.append(fingers.area())
 
@@ -329,12 +345,7 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
                 # logger.debug(extra_interval)
                 cluster = cluster.transform(
                     [interside.intersection],
-                    lambda prev: prev
-                    | Geom1D(
-                        [
-                            extra_interval,
-                        ]
-                    ),
+                    lambda prev: prev | Geom1D([extra_interval,]),
                 )
                 break
 
@@ -371,7 +382,9 @@ def heuristic_multi_inter_single_decisions(sb, params=None):  # noqa
                     logger.debug("  Unchoose %s %s", side.id, rnge)
                     sb = sb.unchoose_interside(side.id, rnge)
 
-        logger.debug("   OK %s\n     CHOSEN %s", sb.interside_ok, sb.interside_chosen)
+        logger.debug(
+            "   OK %s\n     CHOSEN %s", sb.interside_ok, sb.interside_chosen
+        )
         sb.check()
 
     return sb
@@ -437,7 +450,13 @@ def random_min_max(n, mn, mx, total, rng):
     for i in range(n):
         result.append((cur_sum, cur_sum + lengths[i]))
         cur_sum += lengths[i]
-    assert cur_sum - total < 1e-8, (lengths, sum(lengths), result, cur_sum, total)
+    assert cur_sum - total < 1e-8, (
+        lengths,
+        sum(lengths),
+        result,
+        cur_sum,
+        total,
+    )
     return result
 
 
@@ -471,10 +490,14 @@ def single_fingers_random(sb, params=None):
             geom1d = Geom1D([(start, end)])
             end_dist = 2
             on_side = []
-            for end_interval in [(start - end_dist, start), (end, end + end_dist)]:
+            for end_interval in [
+                (start - end_dist, start),
+                (end, end + end_dist),
+            ]:
                 ei = Geom1D([end_interval])
                 on_sides = [
-                    (sb.interside_chosen[side.id] & ei).measure1d() for side in sides
+                    (sb.interside_chosen[side.id] & ei).measure1d()
+                    for side in sides
                 ]
                 on_side.append(np.argmax(on_sides))
 
@@ -491,7 +514,8 @@ def single_fingers_random(sb, params=None):
                 n_max = n_max_base - 1 + n_max_base % 2
 
             logger.debug(
-                f"odd {odd} n_min {n_min_base} {n_min}" f" n_max {n_max_base} {n_max}"
+                f"odd {odd} n_min {n_min_base} {n_min}"
+                f" n_max {n_max_base} {n_max}"
             )
 
             if n_min > n_max:
@@ -507,7 +531,9 @@ def single_fingers_random(sb, params=None):
 
             n = rng.randint(n_min, n_max + 1)
 
-            locations = random_min_max(n, min_width, max_width, end - start, rng)
+            locations = random_min_max(
+                n, min_width, max_width, end - start, rng
+            )
 
             cur_side = 1 - on_side[0]
 

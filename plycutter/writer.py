@@ -27,16 +27,16 @@ logger = logging.getLogger(__name__)
 
 
 def write_svg(filename, geom2ds):
-    file = open(filename, 'w')
-    file.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n")
-    file.write("<svg version = \"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n")
-    
+    file = open(filename, "w")
+    file.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
+    file.write('<svg version = "1.1" xmlns="http://www.w3.org/2000/svg">\n')
+
     # Trivial nesting horizontally
     x = 0
     for name, geom in geom2ds.items():
         print(name)
         if geom.is_empty():
-            logger.warn(f'Empty sheet {name}')
+            logger.warn(f"Empty sheet {name}")
             continue
 
         aabb = AABB()
@@ -60,7 +60,9 @@ def write_svg(filename, geom2ds):
             path = "M "
             for coord in coords:
                 path += "{:0.6f},{:0.6f} ".format(coord[0], coord[1])
-            file.write("<path d =\"" + path + "\" style=\"fill:none;stroke:#000000;stroke-width:1px;stroke-opacity:1.0\" />\n")
+            style = "fill:none;stroke:#000000;stroke-width:1px;stroke-opacity:1.0"
+            file.write(f"""<path d ="{path}" style="{style}" />\n""")
+
         for polygon in geom.polygons():
             draw_coords(polygon.spwhs[0].outer)
             for hole in polygon.spwhs[0].holes:
@@ -70,7 +72,7 @@ def write_svg(filename, geom2ds):
 
 
 def write_dxf(filename, geom2ds):
-    dwg = ezdxf.new('AC1015')
+    dwg = ezdxf.new("AC1015")
     modelspace = dwg.modelspace()
 
     # Trivial nesting horizontally
@@ -78,7 +80,7 @@ def write_dxf(filename, geom2ds):
     for name, geom in geom2ds.items():
         print(name)
         if geom.is_empty():
-            logger.warn(f'Empty sheet {name}')
+            logger.warn(f"Empty sheet {name}")
             continue
 
         aabb = AABB()
