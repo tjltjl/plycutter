@@ -40,28 +40,37 @@ def P(a, b):
     return (F(a), F(b))
 
 
-@pytest.mark.parametrize("fx,fy,o", [
-    (4, 0, 0),
-    (4, -2, 1/2),
-    (4, -4, 1),
-    (2, -4, 3/2),
-    (0, -4, 2),
-    (-2, -4, 5/2),
-    (-4, -4, 3),
-    (-4, -2, 7/2),
-    (-4, 0, 4),
-    (-4, 2, 9/2),
-    (-4, 4, 5),
-    (-2, 4, 11/2),
-    (0, 4, 6),
-    (2, 4, 13/2),
-    (4, 4, 7),
-    (4, 2, 15/2),
-])
+@pytest.mark.parametrize(
+    "fx,fy,o",
+    [
+        (4, 0, 0),
+        (4, -2, 1 / 2),
+        (4, -4, 1),
+        (2, -4, 3 / 2),
+        (0, -4, 2),
+        (-2, -4, 5 / 2),
+        (-4, -4, 3),
+        (-4, -2, 7 / 2),
+        (-4, 0, 4),
+        (-4, 2, 9 / 2),
+        (-4, 4, 5),
+        (-2, 4, 11 / 2),
+        (0, 4, 6),
+        (2, 4, 13 / 2),
+        (4, 4, 7),
+        (4, 2, 15 / 2),
+    ],
+)
 def test_vector_frangle(fx, fy, o):
     assert vector_frangle((F(fx, 16), F(fy, 16), None)) == o
-    assert vector_frangle(frangle_unit_square_vector(
-        vector_frangle((F(fx, 16), F(fy, 16), None)))) == o
+    assert (
+        vector_frangle(
+            frangle_unit_square_vector(
+                vector_frangle((F(fx, 16), F(fy, 16), None))
+            )
+        )
+        == o
+    )
 
 
 @hyp.given(points())

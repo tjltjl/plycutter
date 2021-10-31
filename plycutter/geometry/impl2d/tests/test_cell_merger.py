@@ -26,30 +26,23 @@ from ....plytypes import Fraction, totuple
 F = Fraction
 
 
-hyp.settings.register_profile('verbose', verbosity=hyp.Verbosity.verbose,
-                              max_examples=1000)
-hyp.settings.load_profile('verbose')
+hyp.settings.register_profile(
+    "verbose", verbosity=hyp.Verbosity.verbose, max_examples=1000
+)
+hyp.settings.load_profile("verbose")
 
-SQUARE = np.array([
-    [0, 0],
-    [0, 1],
-    [1, 1],
-    [1, 0],
-])
+SQUARE = np.array([[0, 0], [0, 1], [1, 1], [1, 0],])
 
 N = 3
-SQUARES = {
-    (x, y): SQUARE + [x, y]
-    for x in range(N)
-    for y in range(N)
-}
+SQUARES = {(x, y): SQUARE + [x, y] for x in range(N) for y in range(N)}
 
 SQUARES_KEYS = list(sorted(SQUARES.keys()))
 
 
 @hyp.settings(deadline=30000)
-@hyp.given(hys.lists(min_size=2, max_size=20,
-                     elements=hys.permutations(SQUARES_KEYS)))
+@hyp.given(
+    hys.lists(min_size=2, max_size=20, elements=hys.permutations(SQUARES_KEYS))
+)
 #        elements=hys.sampled_from(SQUARES_KEYS), unique=True))))
 def test_cell_merger(perms):
     canonical = None
@@ -58,14 +51,14 @@ def test_cell_merger(perms):
         for k in perm:
             cell = totuple(SQUARES[k])
             m.add_cell(cell)
-            hyp.note(('add', cell))
+            hyp.note(("add", cell))
 
             if False:
                 origs_used = set()
                 for k, v in m.get_cells_originals().items():
                     hyp.note(k)
                     for orig in v:
-                        hyp.note('    %s' % (orig,))
+                        hyp.note("    %s" % (orig,))
                     vset = set(v)
                     assert len(origs_used & vset) == 0
                     origs_used |= vset

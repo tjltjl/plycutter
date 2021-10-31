@@ -43,17 +43,21 @@ from .util import tr, random_transform_matrices
 
 N = 8
 
-squares = [[Geom2D.rectangle(x, y, x + 1, y + 1)
-            for y in range(N)] for x in range(N)]
+squares = [
+    [Geom2D.rectangle(x, y, x + 1, y + 1) for y in range(N)] for x in range(N)
+]
 square_idxs = [(x, y) for x in range(N) for y in range(N)]
 
 
 @hyp.settings(deadline=30000)  # noqa: C901
 @hyp.given(
-    hys.lists(elements=hys.tuples(
-        hys.sampled_from(["and", "or", "sub"]),
-        hys.lists(elements=hys.sampled_from(square_idxs)))),
-    random_transform_matrices()
+    hys.lists(
+        elements=hys.tuples(
+            hys.sampled_from(["and", "or", "sub"]),
+            hys.lists(elements=hys.sampled_from(square_idxs)),
+        )
+    ),
+    random_transform_matrices(),
 )
 def test_merge_squares(ops, transform):  # noqa: C901
     # The following two are two different ways of representing
@@ -65,7 +69,7 @@ def test_merge_squares(ops, transform):  # noqa: C901
     manual = {k: 0 for k in square_idxs}
 
     for op, args in ops:
-        if op == 'and':
+        if op == "and":
             new_manual = {k: 0 for k in manual.keys()}
             for x, y in args:
                 new_manual[x, y] = manual[x, y]
@@ -78,19 +82,20 @@ def test_merge_squares(ops, transform):  # noqa: C901
         for x, y in sorted(args):
             hyp.note((x, y))
             square = squares[x][y].transformed_with(
-                lambda coords: tr(transform, coords))
+                lambda coords: tr(transform, coords)
+            )
             operand = operand | square
-            if op == 'or':
+            if op == "or":
                 manual[x, y] = 1
-            elif op == 'sub':
+            elif op == "sub":
                 manual[x, y] = 0
 
-        hyp.note('go')
-        if op == 'and':
+        hyp.note("go")
+        if op == "and":
             accumulator = accumulator & operand
-        elif op == 'or':
+        elif op == "or":
             accumulator = accumulator | operand
-        elif op == 'sub':
+        elif op == "sub":
             accumulator = accumulator - operand
 
         half = F(1, 2)

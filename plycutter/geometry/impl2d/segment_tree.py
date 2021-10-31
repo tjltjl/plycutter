@@ -81,17 +81,22 @@ class SegmentTree1D:
         def stab(self, value):
             if self.min <= value <= self.max:
                 yield from iter(self.segments)
-            if value < self.cut or (value == self.cut and
-                                    self.left.closed_high):
+            if value < self.cut or (
+                value == self.cut and self.left.closed_high
+            ):
                 yield from self.left.stab(value)
             else:
                 yield from self.right.stab(value)
 
         def __repr__(self):
-            def c(closed): return "C" if closed else "V"
-            return f"N({self.min}{c(self.closed_low)}, {self.cut}, " \
-                   f"{self.max}{c(self.closed_high)}, {self.segments}, " \
-                   f"{self.left}, {self.right})"
+            def c(closed):
+                return "C" if closed else "V"
+
+            return (
+                f"N({self.min}{c(self.closed_low)}, {self.cut}, "
+                f"{self.max}{c(self.closed_high)}, {self.segments}, "
+                f"{self.left}, {self.right})"
+            )
 
     class PointLeaf:
         def __init__(self, value):
@@ -151,14 +156,13 @@ class SegmentTree1D:
         nodes = []
         for i in range(len(endpoints)):
             if i > 0:
-                nodes.append(self.RangeLeaf(
-                    endpoints[i - 1], endpoints[i]))
+                nodes.append(self.RangeLeaf(endpoints[i - 1], endpoints[i]))
             nodes.append(self.PointLeaf(endpoints[i]))
 
         while len(nodes) > 1:
             new_nodes = []
             for i in range(0, len(nodes), 2):
-                combo = nodes[i:i + 2]
+                combo = nodes[i : i + 2]
                 if len(combo) == 2:
                     combo = [self.Node(*combo)]
                 new_nodes.extend(combo)

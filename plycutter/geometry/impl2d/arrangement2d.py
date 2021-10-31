@@ -26,18 +26,26 @@ from ...plytypes import Fraction, FractionClass, fstr, fastr
 from ..types2d import Point, Segment
 from ..aabb import AABB
 
-from .frangle2d import vector_frangle, MAX_FRANGLE, FRANGLE_90, \
-        frangle_unit_square_vector
-from .primitive2d import segment_segment_general_intersection, \
-    line_segment_point_fraction, \
-    simple_polygon_area, locate_point_polygon_winding_number, \
-    edges_iter
+from .frangle2d import (
+    vector_frangle,
+    MAX_FRANGLE,
+    FRANGLE_90,
+    frangle_unit_square_vector,
+)
+from .primitive2d import (
+    segment_segment_general_intersection,
+    line_segment_point_fraction,
+    simple_polygon_area,
+    locate_point_polygon_winding_number,
+    edges_iter,
+)
 from . import scan2d, segment_tree
-from .import cell_merger, pmr_quadtree
-from .import geom2d_simple_holes
+from . import cell_merger, pmr_quadtree
+from . import geom2d_simple_holes
 
 
-def NP(v): return np.array(v, object)
+def NP(v):
+    return np.array(v, object)
 
 
 class _Vertex:
@@ -47,7 +55,8 @@ class _Vertex:
     def _key(self, half_edge):
         assert half_edge[0] == self.coordinates
         return vector_frangle(
-            np.array(half_edge[1], dtype=object) - half_edge[0])
+            np.array(half_edge[1], dtype=object) - half_edge[0]
+        )
 
     def __init__(self, coordinates):
         self.coordinates = coordinates
@@ -55,8 +64,11 @@ class _Vertex:
         self.half_edges_by_order = SortedList(key=self._key)
 
     def add_half_edge(self, half_edge):
-        existing = list(self.half_edges_by_order.irange(
-            half_edge, half_edge, inclusive=(True, True)))
+        existing = list(
+            self.half_edges_by_order.irange(
+                half_edge, half_edge, inclusive=(True, True)
+            )
+        )
         assert len(existing) == 0, fstr(half_edge, existing, approx=True)
 
         self.half_edges_by_order.add(half_edge)
@@ -65,14 +77,22 @@ class _Vertex:
         assert half_edge[0] == self.coordinates
 
         nxt = list(
-            islice(self.half_edges_by_order.irange(
-                half_edge, None, inclusive=(False, True)),
-                1))
+            islice(
+                self.half_edges_by_order.irange(
+                    half_edge, None, inclusive=(False, True)
+                ),
+                1,
+            )
+        )
         if len(nxt) == 0:
             nxt = list(
-                islice(self.half_edges_by_order.irange(
-                    None, None, inclusive=(True, True)),
-                    1))
+                islice(
+                    self.half_edges_by_order.irange(
+                        None, None, inclusive=(True, True)
+                    ),
+                    1,
+                )
+            )
 
         assert len(nxt) == 1
 
@@ -82,24 +102,34 @@ class _Vertex:
         assert half_edge[0] == self.coordinates
 
         nxt = list(
-            islice(self.half_edges_by_order.irange(
-                None, half_edge, inclusive=(True, False),
-                reverse=True),
-                1))
+            islice(
+                self.half_edges_by_order.irange(
+                    None, half_edge, inclusive=(True, False), reverse=True
+                ),
+                1,
+            )
+        )
         if len(nxt) == 0:
             nxt = list(
-                islice(self.half_edges_by_order.irange(
-                    None, None, inclusive=(True, True),
-                    reverse=True),
-                    1))
+                islice(
+                    self.half_edges_by_order.irange(
+                        None, None, inclusive=(True, True), reverse=True
+                    ),
+                    1,
+                )
+            )
 
         assert len(nxt) == 1, (self.half_edges_by_order, nxt)
 
         prev = self.get_next_cw(nxt[0])
-        assert prev == half_edge, fstr(half_edge, nxt[0], prev,
-                                       self._key(half_edge), self._key(
-                                           nxt[0]),
-                                       self._key(prev))
+        assert prev == half_edge, fstr(
+            half_edge,
+            nxt[0],
+            prev,
+            self._key(half_edge),
+            self._key(nxt[0]),
+            self._key(prev),
+        )
 
         return nxt[0]
 
@@ -115,7 +145,8 @@ class _HalfEdge:
         self.sids = set()
         self.cell = None
         self.frangle = vector_frangle(
-            np.array(self.vs[1], object) - self.vs[0])
+            np.array(self.vs[1], object) - self.vs[0]
+        )
 
 
 class _Cell:
@@ -126,9 +157,11 @@ class _Cell:
     vertices: Any  # List of vertices
 
     def __repr__(self):
-        return f"_Cell({self.negative}, {self.count_from_outside}, " \
-            f"container={self.container}, contains={self.contains}, " \
+        return (
+            f"_Cell({self.negative}, {self.count_from_outside}, "
+            f"container={self.container}, contains={self.contains}, "
             f"verts={self.vertices})"
+        )
 
 
 class SegmentArrangement:
@@ -173,8 +206,9 @@ class SegmentArrangement:
         self.cells = {}
 
         # Map segments out of numpy arrays
-        sid_segments = {k: (tuple(v[0]), tuple(v[1]))
-                        for k, v in sid_segments.items()}
+        sid_segments = {
+            k: (tuple(v[0]), tuple(v[1])) for k, v in sid_segments.items()
+        }
 
         # Remove dups here...
         segments = set()
@@ -182,13 +216,21 @@ class SegmentArrangement:
         for sid, seg in sid_segments.items():
             simple = tuple(sorted(seg))
             assert simple[0][0].__class__ == FractionClass, (
-                simple[0], simple[0].__class__)
+                simple[0],
+                simple[0].__class__,
+            )
             assert simple[0][1].__class__ == FractionClass, (
-                simple[0], simple[0].__class__)
+                simple[0],
+                simple[0].__class__,
+            )
             assert simple[1][0].__class__ == FractionClass, (
-                simple[1], simple[1].__class__)
+                simple[1],
+                simple[1].__class__,
+            )
             assert simple[1][1].__class__ == FractionClass, (
-                simple[1], simple[1].__class__)
+                simple[1],
+                simple[1].__class__,
+            )
             segments.add(simple)
             segment_sids[simple].append((sid, seg))
 
@@ -226,8 +268,9 @@ class SegmentArrangement:
             add_vertex(segment[0], [segment])
             add_vertex(segment[1], [segment])
 
-        for (inter_v, inter_segments) in \
-                scan2d.all_segment_intersections(segments):
+        for (inter_v, inter_segments) in scan2d.all_segment_intersections(
+            segments
+        ):
             add_vertex(inter_v, inter_segments)
 
         #  inters = list(all_segment_intersections_fast2(segments))
@@ -268,10 +311,17 @@ class SegmentArrangement:
                     lsf = line_segment_point_fraction(segment, v)
                     assert lsf is not None and 0 <= lsf <= 1
 
-                assert (list(sorted(seg_vertices)) ==
-                        list(sorted(seg_vertices_slow))), \
-                    fstr(segment, 'K', k, 'VERTS',
-                         seg_vertices, seg_vertices_slow, approx=True)
+                assert list(sorted(seg_vertices)) == list(
+                    sorted(seg_vertices_slow)
+                ), fstr(
+                    segment,
+                    "K",
+                    k,
+                    "VERTS",
+                    seg_vertices,
+                    seg_vertices_slow,
+                    approx=True,
+                )
 
                 assert line_segment_point_fraction(segment, v) is not None
 
@@ -280,7 +330,8 @@ class SegmentArrangement:
             # Sort going away from v0
             seg_vertices = sorted(
                 seg_vertices,
-                key=lambda v: (v[0] - v0[0]) ** 2 + (v[1] - v0[1]) ** 2)
+                key=lambda v: (v[0] - v0[0]) ** 2 + (v[1] - v0[1]) ** 2,
+            )
 
             n = len(seg_vertices)
             assert n >= 2
@@ -300,8 +351,11 @@ class SegmentArrangement:
                 he_cw = vertex.get_next_cw(he_cw)
                 he_ccw = vertex.get_next_ccw(he_ccw)
                 if i < len(vertex.half_edges_by_order) - 1:
-                    assert he_cw != he_0, (he_cw, he_0,
-                                           vertex.half_edges_by_order)
+                    assert he_cw != he_0, (
+                        he_cw,
+                        he_0,
+                        vertex.half_edges_by_order,
+                    )
                     assert he_ccw != he_0
             assert he_cw == he_0
             assert he_ccw == he_0
@@ -342,9 +396,9 @@ class SegmentArrangement:
                 unprocessed_half_edges.remove(nxt)
                 assert nxt[0] == cur
                 assert nxt[1] != cur
-                assert nxt[1] != prev, \
-                    fstr(vertices, nxt,
-                         self.vertices[cur].half_edges_by_order)
+                assert nxt[1] != prev, fstr(
+                    vertices, nxt, self.vertices[cur].half_edges_by_order
+                )
                 # E.g. for a bowtie, the outer cell
                 # will contain the middle vertex twice
                 # so cannot assert uniqueness here
@@ -355,7 +409,7 @@ class SegmentArrangement:
             cell_obj = _Cell()
             area = simple_polygon_area(cell)
             assert area != 0
-            cell_obj.negative = (area < 0)
+            cell_obj.negative = area < 0
             cell_obj.count_from_outside = None
             cell_obj.container = None
             cell_obj.containeds = []
@@ -390,7 +444,7 @@ class SegmentArrangement:
         """
         done = set()
 
-        print('FCH')
+        print("FCH")
         for cell in self.cells.values():
             print(fstr(cell.vertices, approx=True))
             if cell in done:
@@ -398,11 +452,13 @@ class SegmentArrangement:
             # Cast ray
             if cell.negative:
                 pt = self._find_point_in_cell(cell.vertices)
-                loc = locate_point_polygon_winding_number(cell.vertices,
-                                                          cell.point_in_cell)
+                loc = locate_point_polygon_winding_number(
+                    cell.vertices, cell.point_in_cell
+                )
                 assert loc < 0
                 inters = self.ray_halfedge_query_the_general_ray(
-                    pt, self.general_vector)
+                    pt, self.general_vector
+                )
                 cells = {}
 
                 for (t, half_edge) in inters:
@@ -418,15 +474,17 @@ class SegmentArrangement:
 
                 # Choose the positive ones
 
-                cells = {other_cell: t
-                         for other_cell, t
-                         in cells.items()
-                         if not self.cells[other_cell].negative}
+                cells = {
+                    other_cell: t
+                    for other_cell, t in cells.items()
+                    if not self.cells[other_cell].negative
+                }
                 if len(cells) == 0:
                     cell.container = None
                 else:
                     cont = list(
-                        sorted(cells.items(), key=lambda item: item[1]))[0]
+                        sorted(cells.items(), key=lambda item: item[1])
+                    )[0]
                     cell.container = self.cells[cont[0]]
             else:
                 # Positive
@@ -448,7 +506,8 @@ class SegmentArrangement:
                             for half_edge in edges_iter(other.vertices):
                                 doing.append(half_edge)
                 assert len(negatives) == 1, fstr(
-                    (negatives, positives), approx=True)
+                    (negatives, positives), approx=True
+                )
                 negative = list(negatives)[0]
                 for pos in positives:
                     pos.container = negative
@@ -496,8 +555,9 @@ class SegmentArrangement:
         """
         for cell in self.cells.values():
             cell.point_in_cell = self._find_point_in_cell(cell.vertices)
-            loc = locate_point_polygon_winding_number(cell.vertices,
-                                                      cell.point_in_cell)
+            loc = locate_point_polygon_winding_number(
+                cell.vertices, cell.point_in_cell
+            )
             if cell.negative:
                 assert loc < 0
             else:
@@ -511,7 +571,8 @@ class SegmentArrangement:
 
             cells = set()
             inters = self.ray_halfedge_query_the_general_ray(
-                pt, self.general_vector)
+                pt, self.general_vector
+            )
             # print('INTERS', inters)
             for (t, half_edge) in inters:
                 if t < 0:
@@ -522,13 +583,17 @@ class SegmentArrangement:
 
             if not cell.negative:
                 # Positive should always contain itself
-                assert cell.vertices in cells, \
-                    (fastr(cell.vertices, cells),
-                     cell.vertices, inters, pt)
+                assert cell.vertices in cells, (
+                    fastr(cell.vertices, cells),
+                    cell.vertices,
+                    inters,
+                    pt,
+                )
                 cells.remove(cell.vertices)
             else:
                 assert cell.vertices not in cells, fstr(
-                    cell.vertices, cells, approx=True)
+                    cell.vertices, cells, approx=True
+                )
             # But it doesn't count
             containers[cell] = list(cells)
 
@@ -545,15 +610,19 @@ class SegmentArrangement:
                 continue
             deg = [degrees[c] for c in cont]
             closest = cont[np.argmax(deg)]
-            assert degrees[closest] == degrees[cell.vertices] - 1, \
-                fastr(degrees[closest], degrees[cell.vertices],
-                      closest, cell.vertices)
+            assert degrees[closest] == degrees[cell.vertices] - 1, fastr(
+                degrees[closest],
+                degrees[cell.vertices],
+                closest,
+                cell.vertices,
+            )
             assert self.cells[closest].negative != cell.negative
             cell.container = closest
 
     def __init__qtree(self):
         self.qtree = pmr_quadtree.SegmentPMRQuadTree(
-            items=self.half_edges.keys(), threshold=12)
+            items=self.half_edges.keys(), threshold=12
+        )
 
     def __init__gstree(self):
         gsegs = []
@@ -576,6 +645,7 @@ class SegmentArrangement:
 
         def key(v):
             return vector_frangle(v)
+
         frangles = SortedList()
 
         for half_edge in self.half_edges.values():
@@ -592,8 +662,9 @@ class SegmentArrangement:
         assert len(first) == 1
         first = first[0]
 
-        second = list(islice(frangles.irange(
-            first, None, inclusive=(False, True)), 1))
+        second = list(
+            islice(frangles.irange(first, None, inclusive=(False, True)), 1)
+        )
         assert len(second) == 1
         second = second[0]
 
@@ -601,39 +672,47 @@ class SegmentArrangement:
 
         return frangle_unit_square_vector((first + second) / 2)
 
-    def ray_halfedge_query_the_general_ray(self, pt,
-                                           direction, keep_all=False):
+    def ray_halfedge_query_the_general_ray(
+        self, pt, direction, keep_all=False
+    ):
         frangle = vector_frangle(direction)
         inters = []
 
         # Take it outside
-        const = 10 * (sum(abs(self.aabb.upper - self.aabb.lower)) /
-                      max(abs(NP(direction))))
+        const = 10 * (
+            sum(abs(self.aabb.upper - self.aabb.lower))
+            / max(abs(NP(direction)))
+        )
 
         rayseg = (pt, NP(pt) + const * NP(direction))
         assert not self.aabb.contains(rayseg[1]), fstr(
-            (rayseg, self.aabb), approx=True)
+            (rayseg, self.aabb), approx=True
+        )
 
         # Special data structure
 
         offset = np.dot(self.general_vector_normal, pt)
 
         for low, high, he_key_sorted in self.gstree.stab(offset):
-            for he_key in (he_key_sorted,
-                           (he_key_sorted[1], he_key_sorted[0])):
+            for he_key in (
+                he_key_sorted,
+                (he_key_sorted[1], he_key_sorted[0]),
+            ):
                 half_edge = self.half_edges[he_key]
 
-                self._ray_halfedge_test(half_edge, rayseg,
-                                        frangle, inters, keep_all,
-                                        const)
+                self._ray_halfedge_test(
+                    half_edge, rayseg, frangle, inters, keep_all, const
+                )
 
         return list(sorted(inters))
 
     def ray_halfedge_query_general_ray(self, pt, direction, keep_all=False):
-        if np.all(direction == self.general_vector) or \
-           np.all(-direction == self.general_vector):
+        if np.all(direction == self.general_vector) or np.all(
+            -direction == self.general_vector
+        ):
             return self.ray_halfedge_query_the_general_ray(
-                pt, direction, keep_all)
+                pt, direction, keep_all
+            )
 
         if self.qtree is None:
             raise Exception("Do not want qtree")
@@ -643,24 +722,27 @@ class SegmentArrangement:
         inters = []
 
         # Take it outside
-        const = (sum(abs(self.aabb.upper - self.aabb.lower)) /
-                 max(abs(NP(direction))))
+        const = sum(abs(self.aabb.upper - self.aabb.lower)) / max(
+            abs(NP(direction))
+        )
 
         rayseg = (pt, NP(pt) + const * NP(direction))
         assert not self.aabb.contains(rayseg[1]), fstr(
-            (rayseg, self.aabb), approx=True)
+            (rayseg, self.aabb), approx=True
+        )
 
         for he_key in self.qtree.find(rayseg):
             half_edge = self.half_edges[he_key]
 
-            self._ray_halfedge_test(half_edge, rayseg,
-                                    frangle, inters, keep_all,
-                                    const)
+            self._ray_halfedge_test(
+                half_edge, rayseg, frangle, inters, keep_all, const
+            )
 
         return list(sorted(inters))
 
-    def ray_halfedge_query_general_ray_slow(self, pt,
-                                            direction, keep_all=False):
+    def ray_halfedge_query_general_ray_slow(
+        self, pt, direction, keep_all=False
+    ):
         """Return all half-edges the given ray intersects.
 
         The ray must not be parallel to any edge.
@@ -684,28 +766,34 @@ class SegmentArrangement:
 
         for half_edge in self.half_edges.values():
             self._ray_halfedge_test(
-                half_edge, rayseg, frangle, inters, keep_all)
+                half_edge, rayseg, frangle, inters, keep_all
+            )
 
         return list(sorted(inters))
 
-    def _ray_halfedge_test(self, half_edge, rayseg, frangle,
-                           inters, keep_all, const=1):
+    def _ray_halfedge_test(
+        self, half_edge, rayseg, frangle, inters, keep_all, const=1
+    ):
 
         (pt, the, tray) = segment_segment_general_intersection(
-            half_edge.vs, rayseg)
+            half_edge.vs, rayseg
+        )
 
         keep = False
 
         if keep_all:
-            keep = (0 <= the <= 1)
+            keep = 0 <= the <= 1
         else:
             if 0 < the < 1:
                 keep = True
             else:
                 # Check direction
                 dfrangle = (half_edge.frangle - frangle) % MAX_FRANGLE
-                assert dfrangle != 0 and dfrangle != MAX_FRANGLE / \
-                    2, (frangle, half_edge.frangle, dfrangle)
+                assert dfrangle != 0 and dfrangle != MAX_FRANGLE / 2, (
+                    frangle,
+                    half_edge.frangle,
+                    dfrangle,
+                )
                 if dfrangle < MAX_FRANGLE / 2:
                     include_start = True
                 else:
@@ -746,13 +834,12 @@ class SegmentArrangement:
         inters = (
             self.ray_halfedge_query_general_ray
             # self.ray_halfedge_query_general_ray_slow
-            (pt, v,
-             keep_all=True))
+            (pt, v, keep_all=True)
+        )
 
         # print(fstr(inters, approx=True))
 
-        pos_inters = list(islice(((t, he) for
-                                  t, he in inters if t > 0), 1))
+        pos_inters = list(islice(((t, he) for t, he in inters if t > 0), 1))
 
         if len(pos_inters) == 0:
             return pt + v
@@ -770,8 +857,9 @@ class SegmentArrangement:
         Useful as a separate function because might
         have optimizations
         """
-        return {cell.vertices: cell.point_in_cell
-                for cell in self.cells.values()}
+        return {
+            cell.vertices: cell.point_in_cell for cell in self.cells.values()
+        }
 
     def poly_cells(self, cells):  # noqa XXX
         """Get the polygons corresponding to the union of the given cells.
@@ -831,15 +919,19 @@ class SegmentArrangement:
             # This is not correct.
             for negative in negatives:
                 originals = list(cells_originals[negative])
-                counts = [self.cells[original].count_from_outside
-                          for original in originals]
+                counts = [
+                    self.cells[original].count_from_outside
+                    for original in originals
+                ]
                 outermost = originals[np.argmin(counts)]
                 cell = self.cells[outermost]
                 prevs = set()
                 container = cell.container
                 assert container is not None
-                while (container is not None and
-                       container not in pos_original_cell):
+                while (
+                    container is not None
+                    and container not in pos_original_cell
+                ):
                     container = self.cells[container].container
                     assert container not in prevs, prevs
                     prevs.add(container)
@@ -897,10 +989,15 @@ class SegmentArrangement:
         res = []
         for positive in positives:
             # Reverse to be cw
-            res.append(geom2d_simple_holes.Simple_Polygon_With_Holes(
-                positive,
-                [list(reversed(negverts))
-                    for negverts in pos_negatives[positive]]))
+            res.append(
+                geom2d_simple_holes.Simple_Polygon_With_Holes(
+                    positive,
+                    [
+                        list(reversed(negverts))
+                        for negverts in pos_negatives[positive]
+                    ],
+                )
+            )
         return res
         # XXX
 
@@ -928,7 +1025,8 @@ class SegmentArrangement:
         # print(cells_for_he)
 
         counts = collections.defaultdict(
-            lambda: collections.defaultdict(lambda: 0))
+            lambda: collections.defaultdict(lambda: 0)
+        )
 
         for cell in merged_cells:
             for he in edges_iter(cell):
@@ -943,8 +1041,7 @@ class SegmentArrangement:
 
         for cell in merged_cells:
             inside[cell] = set()
-            for possibly_containing_cell, count in \
-                    counts[cell].items():
+            for possibly_containing_cell, count in counts[cell].items():
                 if count % 2 == 1:
                     assert cell != possibly_containing_cell
                     inside[cell].add(possibly_containing_cell)
@@ -970,5 +1067,7 @@ class SegmentArrangement:
         # print(polys)
         # print('POLYCELLS OUT')
 
-        return [geom2d_simple_holes.Simple_Polygon_With_Holes(k, v)
-                for k, v in polys.items()]
+        return [
+            geom2d_simple_holes.Simple_Polygon_With_Holes(k, v)
+            for k, v in polys.items()
+        ]

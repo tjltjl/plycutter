@@ -18,6 +18,7 @@
 
 import hypothesis as hyp
 import hypothesis.strategies as hys
+
 # from fractions import Fraction as F
 from gmpy2 import mpq as F
 
@@ -70,12 +71,7 @@ def parallel_intersection_points(a, b):
         return []
 
     # Sort the points. Ok also when horizontal.
-    spt = list(sorted([
-        (a[0], 0),
-        (a[1], 0),
-        (b[0], 1),
-        (b[1], 1),
-    ]))
+    spt = list(sorted([(a[0], 0), (a[1], 0), (b[0], 1), (b[1], 1),]))
 
     if spt[1][0] == spt[2][0]:
         # One-point overlap at middle
@@ -94,6 +90,7 @@ def affine_transform(affine_mat, pt):
         affine_mat[0][0] * pt[0] + affine_mat[0][1] * pt[1] + affine_mat[0][2],
         affine_mat[1][0] * pt[0] + affine_mat[1][1] * pt[1] + affine_mat[1][2],
     )
+
 
 ######
 # Hypothesis strategies
@@ -128,8 +125,7 @@ def proper_nonhorizontal_segments(draw):
 @hys.composite
 def proper_affine_matrices(draw):
     """Return non-singular affine matrices."""
-    m = [[draw(fractions()) for i in range(3)]
-         for j in range(2)]
+    m = [[draw(fractions()) for i in range(3)] for j in range(2)]
 
     hyp.assume(scan2d._det(m[0][0:2], m[1][0:2]) != 0)
     return m
@@ -137,6 +133,7 @@ def proper_affine_matrices(draw):
 
 #######
 # Tests for nonparallel_intersection
+
 
 @hyp.given(
     pt=points(),
@@ -166,21 +163,26 @@ def test_nonparallel_intersection_point_nonparallel(pt, pta, ptb, fa, fb):
 
     # Assert all combinations
 
-    assert scan2d._nonparallel_intersection_point(
-        (pta0, pta), (ptb0, ptb)) == desired
-    assert scan2d._nonparallel_intersection_point(
-        (pta, pta0), (ptb0, ptb)) == desired
-    assert scan2d._nonparallel_intersection_point(
-        (pta0, pta), (ptb, ptb0)) == desired
-    assert scan2d._nonparallel_intersection_point(
-        (pta, pta0), (ptb, ptb0)) == desired
+    assert (
+        scan2d._nonparallel_intersection_point((pta0, pta), (ptb0, ptb))
+        == desired
+    )
+    assert (
+        scan2d._nonparallel_intersection_point((pta, pta0), (ptb0, ptb))
+        == desired
+    )
+    assert (
+        scan2d._nonparallel_intersection_point((pta0, pta), (ptb, ptb0))
+        == desired
+    )
+    assert (
+        scan2d._nonparallel_intersection_point((pta, pta0), (ptb, ptb0))
+        == desired
+    )
 
 
 @hyp.given(
-    pt=points(),
-    pt2=points(),
-    off=points(),
-    f=fractions(),
+    pt=points(), pt2=points(), off=points(), f=fractions(),
 )
 def test_nonparallel_intersection_point_parallel(pt, pt2, off, f):
     hyp.assume(pt != pt2)
@@ -195,21 +197,22 @@ def test_nonparallel_intersection_point_parallel(pt, pt2, off, f):
 
     assert scan2d._nonparallel_intersection_point(seg1, seg2) is None
 
+
 ######
 # The main event: tests for all_segment_intersections
 
 
 def _normalize_result(intersections):
     return list(
-        sorted([(pt, tuple(sorted(segs)))
-                for pt, segs in intersections]))
+        sorted([(pt, tuple(sorted(segs))) for pt, segs in intersections])
+    )
 
 
 def asi(segments):
     """Normalize inputs and outputs"""
     return _normalize_result(
-        scan2d.all_segment_intersections(
-            [S(*s) for s in segments]))
+        scan2d.all_segment_intersections([S(*s) for s in segments])
+    )
 
 
 def test_all_segment_intersections_simple():
@@ -228,14 +231,10 @@ def test_all_segment_intersections_simple():
     assert asi([sa, sb]) == [((F(0), F(0)), (sa, sb))]
 
 
-@hyp.settings(deadline=25000,
-              suppress_health_check=[
-                  hyp.HealthCheck.too_slow])
+@hyp.settings(deadline=25000, suppress_health_check=[hyp.HealthCheck.too_slow])
 @hyp.given(
     hys.lists(
-        elements=proper_nonhorizontal_segments(),
-        unique=True,
-        max_size=30,
+        elements=proper_nonhorizontal_segments(), unique=True, max_size=30,
     ),
     proper_affine_matrices(),
     #    hys.lists(
@@ -253,8 +252,10 @@ def test_all_segment_intersections_transform(segments, transform):
     distractors = []
 
     def transform_segment(segment):
-        return (affine_transform(transform, segment[0]),
-                affine_transform(transform, segment[1]))
+        return (
+            affine_transform(transform, segment[0]),
+            affine_transform(transform, segment[1]),
+        )
 
     tr_segments = set([transform_segment(segment) for segment in segments])
 
@@ -264,24 +265,34 @@ def test_all_segment_intersections_transform(segments, transform):
 
     distracted_tr_intersections = asi(distracted_tr_segments)
 
-    hyp.target(float(sum([len(segs)
-                          for pt, segs in distracted_tr_intersections])))
+    hyp.target(
+        float(sum([len(segs) for pt, segs in distracted_tr_intersections]))
+    )
 
-    manually_tr_intersections = _normalize_result([
-        (affine_transform(transform, pt),
-            [transform_segment(segment) for segment in inter_segments])
-        for pt, inter_segments in intersections])
+    manually_tr_intersections = _normalize_result(
+        [
+            (
+                affine_transform(transform, pt),
+                [transform_segment(segment) for segment in inter_segments],
+            )
+            for pt, inter_segments in intersections
+        ]
+    )
 
     # Filter tr_intersections
     # Fix to use walrus in python 3.8...
-    tr_intersections = _normalize_result([
-        (pt, tr_segments & set(inter_segments))
-        for pt, inter_segments in distracted_tr_intersections
-        if len(tr_segments & set(inter_segments)) >= 2])
+    tr_intersections = _normalize_result(
+        [
+            (pt, tr_segments & set(inter_segments))
+            for pt, inter_segments in distracted_tr_intersections
+            if len(tr_segments & set(inter_segments)) >= 2
+        ]
+    )
 
     # return locals()
 
     assert tr_intersections == manually_tr_intersections
+
 
 # @hyp.given(
 #         hys.lists(

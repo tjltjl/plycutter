@@ -41,6 +41,7 @@ class CellMergerSlow:
     final cell.
 
     """
+
     class Cell:
         def __init__(self, cell, origs):
             self.vertices = cell
@@ -54,7 +55,7 @@ class CellMergerSlow:
                 self.half_edges[v0, v1] += 1
 
         def __repr__(self):
-            return f'CELL({fstr(self.vertices), fstr(self.origs)})'
+            return f"CELL({fstr(self.vertices), fstr(self.origs)})"
 
         def merged(self, other):
             self_half_edges = {**self.half_edges}
@@ -93,8 +94,9 @@ class CellMergerSlow:
                     if len(vs) > 1:
                         nxt[v] = vs - {vnext}
                     v = vnext
-                res.append(CellMergerSlow.Cell(tuple(lst),
-                                               self.origs + other.origs))
+                res.append(
+                    CellMergerSlow.Cell(tuple(lst), self.origs + other.origs)
+                )
             return res
 
     def __init__(self):
@@ -138,7 +140,8 @@ class CellMergerSlow:
                                 # Changes the value inside the obj
                                 # --> the list above is ok
                                 outside_cell.origs = tuple(
-                                    set(outside_cell.origs) | orig_cells)
+                                    set(outside_cell.origs) | orig_cells
+                                )
                                 saved = True
 
                         if not saved:
@@ -173,4 +176,6 @@ class CellMergerSlow:
         if origs != self.original_cells:
 
             assert origs == self.original_cells, [
-                self.original_cells_list,  (self.original_cells, origs)]
+                self.original_cells_list,
+                (self.original_cells, origs),
+            ]

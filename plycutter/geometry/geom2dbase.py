@@ -37,6 +37,7 @@ class Geom2DBase:
     so that unions and differences work in
     the most natural way possible.
     """
+
     @classmethod
     def polygon(cls, points, reorient=False):
         pass
@@ -47,19 +48,21 @@ class Geom2DBase:
 
     @classmethod
     def rectangle(cls, x0, y0, x1, y1):
-        return cls.polygon([
-            (x0, y0),
-            (x0, y1),
-            (x1, y1),
-            (x1, y0),
-        ], reorient=True)
+        return cls.polygon(
+            [(x0, y0), (x0, y1), (x1, y1), (x1, y0),], reorient=True
+        )
 
     @abstractmethod
-    def __or__(self, other): pass
+    def __or__(self, other):
+        pass
+
     @abstractmethod
-    def __and__(self, other): pass
+    def __and__(self, other):
+        pass
+
     @abstractmethod
-    def __sub__(self, other): pass
+    def __sub__(self, other):
+        pass
 
     @abstractmethod
     def locate(self, pt):
@@ -98,8 +101,9 @@ class Geom2DBase:
         provided this is a single polygon.
         """
 
-    def to_mpatch(self, color='red', alpha=1.0, label=None,
-                  linewidth=0, ax=None):
+    def to_mpatch(
+        self, color="red", alpha=1.0, label=None, linewidth=0, ax=None
+    ):
         """Convert to matplotlib.patches.PathPatch"""
         codes = []
         verts = []
@@ -109,8 +113,10 @@ class Geom2DBase:
             new_verts = list(new_verts)
             assert len(new_verts) > 1
             new_verts = new_verts + new_verts[0:1]
-            codes.extend([matplotlib.path.Path.MOVETO] +
-                         (len(new_verts) - 1) * [matplotlib.path.Path.LINETO])
+            codes.extend(
+                [matplotlib.path.Path.MOVETO]
+                + (len(new_verts) - 1) * [matplotlib.path.Path.LINETO]
+            )
             verts.extend(new_verts)
 
         for poly in self.polygons():
@@ -123,13 +129,15 @@ class Geom2DBase:
 
         if len(verts):
             path = matplotlib.path.Path(verts, codes)
-            patch = matplotlib.patches.PathPatch(path,
-                                                 fill=True,
-                                                 facecolor=color,
-                                                 edgecolor='black',
-                                                 label=label,
-                                                 alpha=alpha,
-                                                 linewidth=linewidth)
+            patch = matplotlib.patches.PathPatch(
+                path,
+                fill=True,
+                facecolor=color,
+                edgecolor="black",
+                label=label,
+                alpha=alpha,
+                linewidth=linewidth,
+            )
         else:
             patch = None
 
@@ -141,8 +149,9 @@ class Geom2DBase:
     def show2d(self, ax, color, alpha=1.0, label=None, linewidth=0):
         """Plot this Geom2D onto the given matplotlib Axes object.
         """
-        patch = self.to_mpatch(color=color, alpha=alpha, label=label,
-                               linewidth=linewidth)
+        patch = self.to_mpatch(
+            color=color, alpha=alpha, label=label, linewidth=linewidth
+        )
         if patch is not None:
             ax.add_patch(patch)
         ax.set_aspect(1)

@@ -83,10 +83,14 @@ class PMRQuadTree:
 
             self.children = []
 
-            for xr in ((self.aabb.lower[0], aabb_mid[0]),
-                       (aabb_mid[0], self.aabb.upper[0])):
-                for yr in ((self.aabb.lower[1], aabb_mid[1]),
-                           (aabb_mid[1], self.aabb.upper[1])):
+            for xr in (
+                (self.aabb.lower[0], aabb_mid[0]),
+                (aabb_mid[0], self.aabb.upper[0]),
+            ):
+                for yr in (
+                    (self.aabb.lower[1], aabb_mid[1]),
+                    (aabb_mid[1], self.aabb.upper[1]),
+                ):
                     aabb = AABB((xr[0], yr[0]), (xr[1], yr[1]))
                     self.children.append(self.main.Node(self.main, aabb))
 
@@ -111,11 +115,12 @@ class SegmentPMRQuadTree:
             for v0, v1 in items:
                 aabb.include_point(v0)
                 aabb.include_point(v1)
-        self.pmr = PMRQuadTree(aabb,
-                               lambda segment, aabb: aabb.intersects_segment(
-                                   segment),
-                               items,
-                               threshold)
+        self.pmr = PMRQuadTree(
+            aabb,
+            lambda segment, aabb: aabb.intersects_segment(segment),
+            items,
+            threshold,
+        )
 
     def find(self, segment):
         return self.pmr.find_all_similar(segment)

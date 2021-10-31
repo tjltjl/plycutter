@@ -27,24 +27,30 @@ def segment_segment_general_intersection(l0, l1):
     """
 
     # denom = det(np.stack((l0[1] - l0[0], l1[1] - l1[0]), axis=1))
-    denom = (l0[1][0] - l0[0][0]) * (l1[1][1] - l1[0][1]) - \
-            (l0[1][1] - l0[0][1]) * (l1[1][0] - l1[0][0])
+    denom = (l0[1][0] - l0[0][0]) * (l1[1][1] - l1[0][1]) - (
+        l0[1][1] - l0[0][1]
+    ) * (l1[1][0] - l1[0][0])
 
     assert denom != 0
 
     # Normal case, nothing to see here
     # t_num = det(np.stack([l0[0] - l1[0], l1[0] - l1[1]], axis=1))
-    t_num = (l0[0][0] - l1[0][0]) * (l1[0][1] - l1[1][1]) - \
-            (l0[0][1] - l1[0][1]) * (l1[0][0] - l1[1][0])
+    t_num = (l0[0][0] - l1[0][0]) * (l1[0][1] - l1[1][1]) - (
+        l0[0][1] - l1[0][1]
+    ) * (l1[0][0] - l1[1][0])
     # u_num = -det(np.stack([l0[0] - l0[1], l0[0] - l1[0]], axis=1))
-    u_num = -((l0[0][0] - l0[1][0]) * (l0[0][1] - l1[0][1]) -
-              (l0[0][1] - l0[1][1]) * (l0[0][0] - l1[0][0]))
+    u_num = -(
+        (l0[0][0] - l0[1][0]) * (l0[0][1] - l1[0][1])
+        - (l0[0][1] - l0[1][1]) * (l0[0][0] - l1[0][0])
+    )
 
     t0 = t_num / denom
     t1 = u_num / denom
 
-    inter = (l0[0][0] + t_num * (l0[1][0] - l0[0][0]) / denom,
-             l0[0][1] + t_num * (l0[1][1] - l0[0][1]) / denom)
+    inter = (
+        l0[0][0] + t_num * (l0[1][0] - l0[0][0]) / denom,
+        l0[0][1] + t_num * (l0[1][1] - l0[0][1]) / denom,
+    )
 
     assert inter[0] == l1[0][0] + u_num * (l1[1][0] - l1[0][0]) / denom
     assert inter[1] == l1[0][1] + u_num * (l1[1][1] - l1[0][1]) / denom
@@ -65,9 +71,9 @@ def line_segment_point_fraction(segment, point):
     if segment[0][0] == segment[1][0]:
         # Flip x and y
         return line_segment_point_fraction(
-            [(segment[0][1], segment[0][0]),
-             (segment[1][1], segment[1][0])],
-            (point[1], point[0]))
+            [(segment[0][1], segment[0][0]), (segment[1][1], segment[1][0])],
+            (point[1], point[0]),
+        )
 
     f = (point[0] - segment[0][0]) / (segment[1][0] - segment[0][0])
     if np.all(point[1] == segment[0][1] + f * (segment[1][1] - segment[0][1])):
@@ -134,8 +140,10 @@ def locate_point_polygon_winding_number(poly, point):
 
             # Ignore horizontal unless we are on there
             if prev[1] == vert[1]:
-                if prev[0] < point[0] < vert[0] or \
-                        prev[0] > point[0] > vert[0]:
+                if (
+                    prev[0] < point[0] < vert[0]
+                    or prev[0] > point[0] > vert[0]
+                ):
                     return 0
                 continue
 

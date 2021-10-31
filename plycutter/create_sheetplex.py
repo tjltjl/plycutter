@@ -40,18 +40,22 @@ def create_sheetplex(tmesh, params):
     """Create a SheetPlex out of a trimesh mesh.
     """
     # Only stage where we use floats...
-    thickness = float(params['thickness'])
+    thickness = float(params["thickness"])
 
     # Turn off Visibledeprecationwarning
     # from trimesh <-> numpy interaction
     with warnings.catch_warnings():
-        warnings.filterwarnings('ignore',
-                                category=np.VisibleDeprecationWarning)
+        warnings.filterwarnings(
+            "ignore", category=np.VisibleDeprecationWarning
+        )
 
-        sheets = create_sheets(tmesh, thickness,
-                               offset_tolerance=0.1,
-                               normal_tolerance=0.001,
-                               only=params['only_sheets'])
+        sheets = create_sheets(
+            tmesh,
+            thickness,
+            offset_tolerance=0.1,
+            normal_tolerance=0.001,
+            only=params["only_sheets"],
+        )
 
     logger.info(f"Found {len(sheets)} sheets")
 
@@ -62,11 +66,13 @@ def create_sheetplex(tmesh, params):
     return sp
 
 
-def create_sheets(mesh,  # noqa XXX Too complex function
-                  thickness,
-                  offset_tolerance,
-                  normal_tolerance,
-                  only=None):
+def create_sheets(
+    mesh,  # noqa XXX Too complex function
+    thickness,
+    offset_tolerance,
+    normal_tolerance,
+    only=None,
+):
     """
     Find the sheets that the mesh consists of.
 
@@ -93,40 +99,51 @@ def create_sheets(mesh,  # noqa XXX Too complex function
             todo_facets.remove(facet)
 
             normal, offset = _facet_plane(all_facets, facet)
-            logger.debug(f'Facet {facet}: {normal} {offset}')
+            logger.debug(f"Facet {facet}: {normal} {offset}")
 
             oppnormal, oppoffset = -normal, -(offset - thickness)
-            sides = np.array([
-                list(normal) + [offset],
-                list(oppnormal) + [oppoffset],
-            ], np.float64)
+            sides = np.array(
+                [list(normal) + [offset], list(oppnormal) + [oppoffset],],
+                np.float64,
+            )
 
             out_tolerance = offset_tolerance
-            slices_height = [offset + out_tolerance,
-                             offset - thickness - out_tolerance] + list(
-                np.linspace(offset - thickness + offset_tolerance,
-                            offset - offset_tolerance, n_slices))
+            slices_height = [
+                offset + out_tolerance,
+                offset - thickness - out_tolerance,
+            ] + list(
+                np.linspace(
+                    offset - thickness + offset_tolerance,
+                    offset - offset_tolerance,
+                    n_slices,
+                )
+            )
 
             slices = mesh.section_multiplane([0, 0, 0], normal, slices_height)
-            outside_slices = [Geom2D.from_shapely(
-                shapely.ops.unary_union(sl.polygons_full))
-                if sl else Geom2D.empty()
+            outside_slices = [
+                Geom2D.from_shapely(shapely.ops.unary_union(sl.polygons_full))
+                if sl
+                else Geom2D.empty()
                 # sl if sl else Geom2D.empty()
-                for sl in slices[0:2]]
+                for sl in slices[0:2]
+            ]
             slices = slices[2:]
 
             for sl in slices:
                 assert sl is not None, (
                     "Null slice - wrong thickness setting?",
-                    normal, offset)
+                    normal,
+                    offset,
+                )
 
-            slice_rotation = slices[0].metadata['to_3D'].copy()
+            slice_rotation = slices[0].metadata["to_3D"].copy()
             # Remove translation
             slice_rotation[0:3, 3] = 0
 
-            slices = [Geom2D.from_shapely(
-                shapely.ops.unary_union(sl.polygons_full))
-                for sl in slices]
+            slices = [
+                Geom2D.from_shapely(shapely.ops.unary_union(sl.polygons_full))
+                for sl in slices
+            ]
 
             same = [facet]
             opposed = []
@@ -134,21 +151,28 @@ def create_sheets(mesh,  # noqa XXX Too complex function
 
             for other_facet in list(todo_facets):
                 assert other_facet != facet
-                _find_facet_status(other_facet, same, opposed, within,
-                                   mesh,
-                                   all_facets,
-                                   todo_facets,
-                                   normal, offset,
-                                   thickness,
-                                   normal_tolerance, offset_tolerance)
+                _find_facet_status(
+                    other_facet,
+                    same,
+                    opposed,
+                    within,
+                    mesh,
+                    all_facets,
+                    todo_facets,
+                    normal,
+                    offset,
+                    thickness,
+                    normal_tolerance,
+                    offset_tolerance,
+                )
             if len(opposed) == 0:
-                logger.debug('Skipping one at %s, no opposed facets', idx)
+                logger.debug("Skipping one at %s, no opposed facets", idx)
                 continue
 
-            id = 's%d' % idx
+            id = "s%d" % idx
             idx += 1
 
-            logger.debug(f'Adding sheet {id}')
+            logger.debug(f"Adding sheet {id}")
 
             # Find area supported by actual faces
 
@@ -158,11 +182,13 @@ def create_sheets(mesh,  # noqa XXX Too complex function
                 fsupport = Geom2D.empty()
                 for f in fs:
                     for tri in all_facets.facets[f]:
-                        verts = trb[:3, :3].dot(
-                            mesh.triangles[tri].T).T[:, 0:2]
+                        verts = (
+                            trb[:3, :3].dot(mesh.triangles[tri].T).T[:, 0:2]
+                        )
                         verts = vFraction(verts)
                         fsupport = fsupport | Geom2D.polygon(
-                            verts, reorient=True)
+                            verts, reorient=True
+                        )
                 faces.append(fsupport)
 
             slices_max = functools.reduce(operator.or_, slices)
@@ -181,34 +207,44 @@ def create_sheets(mesh,  # noqa XXX Too complex function
                 outside_slices=outside_slices,
                 both_faces=faces[0] & faces[1],
                 slices_max=slices_max,
-                slices_min=slices_min
+                slices_min=slices_min,
             )
 
     return sheets
 
 
-def _find_facet_status(other_facet, same, opposed, within,
-                       mesh,
-                       all_facets,
-                       todo_facets,
-                       normal, offset,
-                       thickness,
-                       normal_tolerance, offset_tolerance):
+def _find_facet_status(
+    other_facet,
+    same,
+    opposed,
+    within,
+    mesh,
+    all_facets,
+    todo_facets,
+    normal,
+    offset,
+    thickness,
+    normal_tolerance,
+    offset_tolerance,
+):
     other_normal, other_offset = _facet_plane(all_facets, other_facet)
 
     norm = np.linalg.norm
 
     # Same plane?
-    if norm(other_normal - normal) < normal_tolerance and \
-            norm(other_offset - offset) < offset_tolerance:
+    if (
+        norm(other_normal - normal) < normal_tolerance
+        and norm(other_offset - offset) < offset_tolerance
+    ):
         same.append(other_facet)
         todo_facets.remove(other_facet)
         return
 
     # Opposing side of plane
-    if norm(-other_normal - normal) < normal_tolerance and \
-            norm(-other_offset - offset + thickness) < \
-            offset_tolerance:
+    if (
+        norm(-other_normal - normal) < normal_tolerance
+        and norm(-other_offset - offset + thickness) < offset_tolerance
+    ):
         opposed.append(other_facet)
         todo_facets.remove(other_facet)
         return
@@ -222,9 +258,11 @@ def _find_facet_status(other_facet, same, opposed, within,
             boundary_verts.add(v1)
         is_within = True
         for v in boundary_verts:
-            if not (offset - thickness - offset_tolerance
-                    <= np.dot(mesh.vertices[v], normal)
-                    <= offset + offset_tolerance):
+            if not (
+                offset - thickness - offset_tolerance
+                <= np.dot(mesh.vertices[v], normal)
+                <= offset + offset_tolerance
+            ):
                 is_within = False
                 break
         if is_within:
@@ -243,6 +281,8 @@ def _facet_plane(all_facets, facet):
     origin = all_facets.origins[facet]
     normal = all_facets.normals[facet]
     return normal, np.dot(origin, normal)
+
+
 #
 
 
@@ -283,8 +323,12 @@ def find_all_facets(mesh):
         origins.append(mesh.triangles[triangle_id][0])
         b = []
         for i in range(3):
-            b.append((mesh.faces[triangle_id][i],
-                      mesh.faces[triangle_id][(i + 1) % 3]))
+            b.append(
+                (
+                    mesh.faces[triangle_id][i],
+                    mesh.faces[triangle_id][(i + 1) % 3],
+                )
+            )
         boundaries.append(b)
 
     return argparse.Namespace(
@@ -299,7 +343,7 @@ def find_all_facets(mesh):
 def create_intersections(sp):
     sheets = list(sp.sheets.values())
     for i, sheet0 in enumerate(sheets):
-        for sheet1 in sheets[i+1:]:
+        for sheet1 in sheets[i + 1 :]:
             sp = create_intersection(sp, (sheet0, sheet1))
     return sp
 
@@ -326,31 +370,30 @@ def create_intersection(sp, sheets):
             inter_orig, res, rank, s = np.linalg.lstsq(
                 [sheet1.normal(t1), sheet2.normal(t2)],
                 [sheet1.offset(t1), sheet2.offset(t2)],
-                rcond=None
+                rcond=None,
             )
             corner_origs.append(inter_orig)
 
-# XXX Future
-#    # Figure out shortening of teeth
-#    d0 = np.linalg.norm(corner_origs[0] - corner_origs[3])
-#    d1 = np.linalg.norm(corner_origs[1] - corner_origs[2])
-#
-#    if d0 > params['max_finger_length']:
-#    elif d1 > parmas['max_finger_length']:
+    # XXX Future
+    #    # Figure out shortening of teeth
+    #    d0 = np.linalg.norm(corner_origs[0] - corner_origs[3])
+    #    d1 = np.linalg.norm(corner_origs[1] - corner_origs[2])
+    #
+    #    if d0 > params['max_finger_length']:
+    #    elif d1 > parmas['max_finger_length']:
 
-    inter = Intersection(
-        id=id,
-        direction=inter_dir,
-        origins=corner_origs,
+    inter = Intersection(id=id, direction=inter_dir, origins=corner_origs,)
+
+    inter_sides = [
+        create_inter_side(sp, inter, sheet, idx)
+        for (idx, sheet) in enumerate(sheets)
+    ]
+
+    inter = inter.set("sides", tuple(inter_sides))
+
+    return sp.transform(
+        ("intersections",), lambda inters: inters.set(id, inter)
     )
-
-    inter_sides = [create_inter_side(sp, inter, sheet, idx) for
-                   (idx, sheet) in enumerate(sheets)]
-
-    inter = inter.set('sides', tuple(inter_sides))
-
-    return sp.transform(('intersections',),
-                        lambda inters: inters.set(id, inter))
 
 
 def intersection_id(sheets):
@@ -360,14 +403,14 @@ def intersection_id(sheets):
 def create_inter_side(sp, inter, sheet, idx):
     id = (inter.id, sheet.id)
 
-    direction = sheet.project_point4(
-        list(inter.direction) + [0.]).astype(np.float64)
+    direction = sheet.project_point4(list(inter.direction) + [0.0]).astype(
+        np.float64
+    )
     direction = vFraction(direction)
     normal = direction[::-1] * [1, -1]
 
     sheet_inter_origs = [
-        sheet.project_point4(list(orig) + [1.])
-        for orig in inter.origins
+        sheet.project_point4(list(orig) + [1.0]) for orig in inter.origins
     ]
     sheet_inter_origs = vFraction(sheet_inter_origs)
 

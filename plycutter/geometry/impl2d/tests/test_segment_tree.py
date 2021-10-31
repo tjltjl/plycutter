@@ -24,13 +24,16 @@ from ..segment_tree import SegmentTree1D, SegmentTree1D_Slow
 
 
 @hyp.given(
-    hys.lists(elements=hys.tuples(
-        # hys.fractions(),
-        # hys.fractions(),
-        hys.integers(),
-        hys.integers(),
-    )),
-    hys.lists(elements=hys.fractions()))
+    hys.lists(
+        elements=hys.tuples(
+            # hys.fractions(),
+            # hys.fractions(),
+            hys.integers(),
+            hys.integers(),
+        )
+    ),
+    hys.lists(elements=hys.fractions()),
+)
 def test_segment_tree_1d(segments, points):
     i = [-1]
 
@@ -38,10 +41,7 @@ def test_segment_tree_1d(segments, points):
         i[0] += 1
         return f"s{i[0]}"
 
-    segments = [
-        tuple(sorted((s[0], s[1]))) + (mkid(),)
-        for s in segments
-    ]
+    segments = [tuple(sorted((s[0], s[1]))) + (mkid(),) for s in segments]
 
     st_slow = SegmentTree1D_Slow(segments)
     st = SegmentTree1D(segments)

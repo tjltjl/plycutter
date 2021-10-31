@@ -24,7 +24,8 @@ import numpy as np
 import math
 
 
-def NP(v): return np.array(v, object)
+def NP(v):
+    return np.array(v, object)
 
 
 class AABB:
@@ -61,8 +62,9 @@ class AABB:
         return np.all(pt <= self.upper) and np.all(pt >= self.lower)
 
     def intersects_aabb(self, other):
-        return (np.all(self.upper >= other.lower)
-                and np.all(other.upper >= self.lower))
+        return np.all(self.upper >= other.lower) and np.all(
+            other.upper >= self.lower
+        )
 
     def intersects_segment(self, segment):
         """Determine whether the segment intersects this AABB.

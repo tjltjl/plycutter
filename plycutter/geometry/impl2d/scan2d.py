@@ -247,10 +247,10 @@ def _all_segment_intersections_no_horizontal(segments):  # noqa
             _assert_fully_sorted(list(active), y)
         # Iterate on both sides
         for it in (
-            active.irange(None, fake_key,
-                          inclusive=(True, True), reverse=True),
-            active.irange(fake_key, None,
-                          inclusive=(False, True)),
+            active.irange(
+                None, fake_key, inclusive=(True, True), reverse=True
+            ),
+            active.irange(fake_key, None, inclusive=(False, True)),
         ):
             neighbour = None
             for sweep_key in it:
@@ -264,8 +264,9 @@ def _all_segment_intersections_no_horizontal(segments):  # noqa
         for touch in touches:
             active.remove(touch)
 
-        segments_at_pt = [sweep_key.segment for sweep_key
-                          in touches + segstarts]
+        segments_at_pt = [
+            sweep_key.segment for sweep_key in touches + segstarts
+        ]
         if len(segments_at_pt) > 1:
             yield (pt, tuple(segments_at_pt))
 

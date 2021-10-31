@@ -60,7 +60,10 @@ def write_svg(filename, geom2ds):
             path = "M "
             for coord in coords:
                 path += "{:0.6f},{:0.6f} ".format(coord[0], coord[1])
-            style = "fill:none;stroke:#000000;stroke-width:1px;stroke-opacity:1.0"
+            style = (
+                "fill:none;stroke:#000000;"
+                "stroke-width:1px;stroke-opacity:1.0"
+            )
             file.write(f"""<path d ="{path}" style="{style}" />\n""")
 
         for polygon in geom.polygons():
